@@ -1,0 +1,100 @@
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+model Account {
+  id                 Int     @default(autoincrement()) @id
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id         Int     @default(autoincrement()) @id
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            Int     @default(autoincrement()) @id 
+  email         String?   @unique
+  firstName     String
+  lastName      String?  
+  password      String?
+  address       String?
+  city          String?
+  province      String?
+  class         String?
+  mobile        String?
+  image         String?
+  userType      String?  
+  userStatus    String
+  KycStatus     String
+  kycDocument   String?
+  kycDocumentNumber String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at") 
+  accounts      Account[]
+  sessions      Session[]
+  verificationTokens    VerificationToken[]
+}
+
+model VerificationToken {
+  id         Int     @default(autoincrement()) @id
+  identifier String?
+  userId     Int?
+  token      String   @unique
+  expires    DateTime?   
+  user User? @relation(fields: [userId], references: [id])
+  @@unique([identifier, token])
+
+
+}
+
+
+model Order {
+  id        Int     @default(autoincrement()) @id
+  orderDate     DateTime  @default(now())  
+  orderNumber     String
+  email       String 
+  planType    String
+  planDetails String?
+  amount      String?
+  paymentId   String?
+  paymentStatus String?
+}
+
+
+model Testinomial{
+  id        Int  @default(autoincrement()) @id
+  name      String
+  class     String?
+  status    String?
+  description String?
+  location    String ?
+  image     String?  
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+}
