@@ -3,4 +3,4 @@ node_modules
 .env
 dist
 app.yaml
-.gcloudignores
+.gcloudignore
