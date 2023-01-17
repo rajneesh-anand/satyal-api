@@ -98,3 +98,10 @@ model Testinomial{
   image     String?  
   createdAt     DateTime  @default(now()) @map(name: "created_at")
 }
+
+model Test {
+  id                 Int     @default(autoincrement()) @id
+  userId             Int
+  type               String
+  
+}

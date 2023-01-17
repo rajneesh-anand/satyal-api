@@ -1,3 +1,4 @@
+const { response } = require("express");
 const express = require("express");
 const prisma = require("../lib/prisma");
 const auth = require("../middleware/auth");
@@ -102,4 +103,11 @@ router.put("/status/:id", async (req, res) => {
   }
 });
 
+router.get("/test",(req,res) => {
+  res.send("HELLO ARYAN")
+}
+)
+
+
 module.exports = router;
+
