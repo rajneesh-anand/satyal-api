@@ -18,8 +18,6 @@ router.post("/register", userSignupValidator(), async (req, res) => {
     });
   });
 
-  console.log(data);
-
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,
@@ -49,11 +47,11 @@ router.post("/register", userSignupValidator(), async (req, res) => {
         mobile: data.fields.mobile,
         userType: data.fields.userType,
         userStatus: data.fields.userType === "Teacher" ? "Inactive" : "Active",
-        KycStatus:
+        kycStatus:
           data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
         kycDocument:
           data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
-        kycDocumentNumber:
+        kycDocumentType:
           data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
       },
     });

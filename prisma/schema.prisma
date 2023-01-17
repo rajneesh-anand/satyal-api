@@ -51,9 +51,9 @@ model User {
   image         String?
   userType      String?  
   userStatus    String
-  KycStatus     String
+  kycStatus     String
   kycDocument   String?
-  kycDocumentNumber String?
+  kycDocumentType String?
   emailVerified DateTime?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at") 

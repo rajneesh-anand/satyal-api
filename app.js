@@ -1,12 +1,14 @@
 const cluster = require("cluster");
-const totalCPUs = require("os").cpus().length;
 const express = require("express");
-var cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
+const totalCPUs = require("os").cpus().length;
+
 const user = require("./routes/user");
 const auth = require("./routes/auth");
 const student = require("./routes/student");
+const teacher = require("./routes/teacher");
 
 require("dotenv").config();
 
@@ -61,6 +63,7 @@ if (cluster.isMaster) {
   app.use("/api/auth", auth);
   app.use("/api/user", user);
   app.use("/api/student", student);
+  app.use("/api/teacher", teacher);
 
   app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
