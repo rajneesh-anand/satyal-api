@@ -102,4 +102,25 @@ router.put("/status/:id", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const studentId = req.params.id;
+  try {
+    const student = await prisma.user.findFirst({
+      where: { id: Number(studentId), userType: "Student" },
+    });
+
+    res.status(200).json({
+      msg: "success",
+      data: student,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  } finally {
+    async () => {
+      await prisma.$disconnect();
+    };
+  }
+});
+
 module.exports = router;
