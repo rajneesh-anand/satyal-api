@@ -2,6 +2,7 @@ const { response } = require("express");
 const express = require("express");
 const prisma = require("../lib/prisma");
 const auth = require("../middleware/auth");
+const { IncomingForm } = require("formidable");
 
 const router = express.Router();
 
@@ -107,12 +108,52 @@ router.get("/:id", async (req, res) => {
   const studentId = req.params.id;
   try {
     const student = await prisma.user.findFirst({
-      where: { id: Number(studentId), userType: "Student" },
+      where: {
+        AND: [{ id: Number(studentId) }, { userType: "Student" }],
+      },
     });
 
     res.status(200).json({
       msg: "success",
       data: student,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  } finally {
+    async () => {
+      await prisma.$disconnect();
+    };
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const studentId = req.params.id;
+  const data = await new Promise((resolve, reject) => {
+    const form = new IncomingForm();
+    form.parse(req, (err, fields, files) => {
+      if (err) return reject(err);
+      resolve({ fields, files });
+    });
+  });
+  try {
+    await prisma.user.update({
+      where: {
+        id: Number(studentId),
+      },
+      data: {
+        firstName: data.fields.fname,
+        lastName: data.fields.lname,
+        address: data.fields.address,
+        city: data.fields.city,
+        province: data.fields.province,
+        class: data.fields.class,
+        mobile: data.fields.mobile,
+      },
+    });
+
+    res.status(200).json({
+      msg: "success",
     });
   } catch (error) {
     console.log(error);
