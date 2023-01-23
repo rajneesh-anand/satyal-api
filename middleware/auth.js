@@ -15,12 +15,10 @@ function extractToken(req) {
 const verifyToken = async (req, res, next) => {
   const token = extractToken(req);
   // req.body.token || req.query.token || req.headers["x-access-token"];
-  // console.log(token);
+  console.log(token);
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ error: "Unauthorized access - No apiKey found" });
+    return res.status(401).json({ error: "Unauthorized access " });
   }
   try {
     const result = await prisma.session.findMany({

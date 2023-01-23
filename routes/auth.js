@@ -74,11 +74,10 @@ router.post("/register", userSignupValidator(), async (req, res) => {
 
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
-  console.log(email);
+
   let user = await prisma.user.findFirst({
     where: {
-      email: email,
-      userStatus: "Active",
+      AND: [{ email: email }, { userStatus: "Active" }],
     },
   });
 
@@ -114,7 +113,7 @@ router.post("/forgot-password", async (req, res) => {
       },
     });
 
-    const link = `http://localhost:3000/user/reset-password?access=${resetToken}`;
+    const link = `${process.env.WEBSITE_URL}/auth/reset-password?access=${resetToken}`;
 
     await emailMailer.sendPasswordResetEmail({
       pwdLink: link,

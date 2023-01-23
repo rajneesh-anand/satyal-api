@@ -42,7 +42,7 @@ function paginate(totalItems, currentPage, pageSize, count, url) {
   };
 }
 
-router.get("/students-list", async (req, res) => {
+router.get("/students-list", auth, async (req, res) => {
   const { orderBy, sortedBy } = req.query;
   const curPage = req.query.page || 1;
   const perPage = req.query.limit || 25;
