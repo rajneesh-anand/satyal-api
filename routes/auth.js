@@ -46,7 +46,7 @@ router.post("/register", userSignupValidator(), async (req, res) => {
         class: data.fields.class,
         mobile: data.fields.mobile,
         userType: data.fields.userType,
-        userStatus: data.fields.userType === "Teacher" ? "Inactive" : "Active",
+        userStatus: "Active",
         kycStatus:
           data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
         kycDocument:

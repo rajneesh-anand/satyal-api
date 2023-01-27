@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "pg-push": "npx prisma db push"
+    "pg-push": "npx prisma db push",
+    "postinstall": "npx prisma db push"
   },
   "keywords": [],
   "license": "ISC",
@@ -26,6 +27,7 @@
     "formidable": "^1.2.2",
     "fuse.js": "^6.5.3",
     "jsonwebtoken": "^8.5.1",
+    "minio": "^7.0.32",
     "reflect-metadata": "^0.1.13",
     "sharp": "^0.28.3"
   },
