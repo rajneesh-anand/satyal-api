@@ -9,7 +9,7 @@ const router = express.Router();
 var client = new Minio.Client({
   endPoint: process.env.MINIO_HOST,
   // port: 11066,
-  useSSL: true,
+  useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,
 });

@@ -7,7 +7,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "pg-push": "npx prisma db push",
-    "postinstall": "npx prisma db push"
+    "postinstall": "npx prisma generate && npx prisma db push "
   },
   "keywords": [],
   "license": "ISC",
