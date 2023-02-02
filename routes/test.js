@@ -53,6 +53,7 @@ router.post("/kyc/:id", async (req, res) => {
       });
     }
   } catch (error) {
+    // error logging
     console.error(error);
     res.status(500).send(error);
   } finally {
