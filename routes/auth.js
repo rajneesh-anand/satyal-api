@@ -49,10 +49,6 @@ router.post("/register", userSignupValidator(), async (req, res) => {
         userStatus: "Active",
         kycStatus:
           data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
-        kycDocument:
-          data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
-        kycDocumentType:
-          data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
       },
     });
     return res.status(200).json(

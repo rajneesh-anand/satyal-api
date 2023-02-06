@@ -14,9 +14,23 @@ var client = new Minio.Client({
   secretKey: process.env.MINIO_SECRET_KEY,
 });
 
+const uploadPhoto = async (path, name) => {
+  try {
+    const content = await fs.promises.readFile(path);
+    const uploadResult = await client.putObject("testing", name, content);
+    const photoUrl = uploadResult
+      ? `${process.env.MINIO_HOST}/testing/${name}`
+      : null;
+    return photoUrl;
+  } catch (err) {
+    console.log(err.message);
+    return null;
+  }
+};
+
 router.post("/kyc/:id", async (req, res) => {
   const teacherId = req.params.id;
-  console.log(teacherId);
+
   const data = await new Promise((resolve, reject) => {
     const form = new IncomingForm();
     form.parse(req, (err, fields, files) => {
@@ -25,38 +39,83 @@ router.post("/kyc/:id", async (req, res) => {
     });
   });
 
-  console.log(data);
   try {
     if (Object.keys(data.files).length !== 0) {
-      const content = await fs.promises
-        .readFile(data.files.document.path)
-        .catch((err) => console.error("Failed to read file", err));
+      const citizenFirstPagePhotoUrl =
+        data.fields.citizenFirst != "null"
+          ? await uploadPhoto(
+              data.files.citizenFirst.path,
+              data.files.citizenFirst.name
+            )
+          : "";
 
-      const uploadResult = await client.putObject(
-        "testing",
-        data.files.document.name,
-        content
-      );
+      const citizenLastPagePhotoUrl =
+        data.fields.citizenLast != "null"
+          ? await uploadPhoto(
+              data.files.citizenLast.path,
+              data.files.citizenLast.name
+            )
+          : "";
 
-      const docUrl = uploadResult
-        ? `${process.env.MINIO_HOST}/testing/${data.files.document.name}`
-        : null;
+      const schoolIdentityPhotoUrl =
+        data.fields.schoolIdentity != "null"
+          ? await uploadPhoto(
+              data.files.schoolIdentity.path,
+              data.files.schoolIdentity.name
+            )
+          : "";
 
-      await prisma.user.update({
-        where: { id: Number(teacherId) },
+      const bachelorDegreePhotoUrl =
+        data.fields.degreeBachelor != "null"
+          ? await uploadPhoto(
+              data.files.degreeBachelor.path,
+              data.files.degreeBachelor.name
+            )
+          : "";
+      const masterDegreePagePhotoUrl =
+        data.fields.degreeMaster != "null"
+          ? await uploadPhoto(
+              data.files.degreeMaster.path,
+              data.files.degreeMaster.name
+            )
+          : "";
+
+      const result = await prisma.teacherkyc.create({
         data: {
-          kycDocumentType: data.fields.docType,
-          kycStatus: "KYC Under Review",
-          kycDocument: docUrl,
+          citizenPhotoFirstPage: citizenFirstPagePhotoUrl,
+          citizenPhotoLastPage: citizenLastPagePhotoUrl,
+          schoolIdentityCard: schoolIdentityPhotoUrl,
+          bachelorDegree: bachelorDegreePhotoUrl,
+          masterDegree: masterDegreePagePhotoUrl,
+          class: data.fields.class,
+          subject: data.fields.subjects,
+          bankName: data.fields.bankName,
+          bankBranch: data.fields.branch,
+          accountName: data.fields.name,
+          accountNumber: data.fields.accountNumber,
+          user: { connect: { id: Number(teacherId) } },
         },
       });
-      return res.status(200).json({
-        msg: "success",
-      });
+      if (result) {
+        await prisma.user.update({
+          where: {
+            id: Number(teacherId),
+          },
+          data: {
+            kycStatus: "KYC Under Review",
+          },
+        });
+
+        return res.status(200).json({
+          msg: "success",
+        });
+      } else {
+        throw new Error("Server is down !");
+      }
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send(error);
+    return res.status(500).send(error.message);
   } finally {
     async () => {
       await prisma.$disconnect();

@@ -37,6 +37,25 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Teacherkyc {
+    id                    Int     @default(autoincrement()) @id
+    citizenPhotoFirstPage String
+    citizenPhotoLastPage  String?  
+    schoolIdentityCard    String?
+    bachelorDegree        String?
+    masterDegree          String?
+    class                 String?
+    subject               String?
+    bankName              String?
+    bankBranch            String?
+    accountName           String?
+    accountNumber         String?
+    userId                Int
+    user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
+}
+
 model User {
   id            Int     @default(autoincrement()) @id 
   email         String   @unique
@@ -52,14 +71,14 @@ model User {
   userType      String  
   userStatus    String
   kycStatus     String?
-  kycDocument   String?
-  kycDocumentType String?
+  
   emailVerified DateTime?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at") 
   accounts      Account[]
   sessions      Session[]
   verificationTokens    VerificationToken[]
+  teacherkycs   Teacherkyc[]
 }
 
 model VerificationToken {
