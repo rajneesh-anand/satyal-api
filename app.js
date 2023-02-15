@@ -10,6 +10,7 @@ const auth = require("./routes/auth");
 const student = require("./routes/student");
 const teacher = require("./routes/teacher");
 const test = require("./routes/test");
+const file = require("./routes/file");
 
 require("dotenv").config();
 
@@ -66,6 +67,7 @@ if (cluster.isMaster) {
   app.use("/api/student", student);
   app.use("/api/teacher", teacher);
   app.use("/api/test", test);
+  app.use("/api", file);
 
   app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
