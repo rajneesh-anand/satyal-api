@@ -63,21 +63,11 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  const http = require("http").Server(app);
-  const socketIO = require("socket.io")(http, {
-    cors: {
-      origin: "http://localhost:3000",
-    },
-  });
-
   app.use((req, res, next) => {
     console.log(req.path, req.method);
     return next();
   });
-  app.use((req, res, next) => {
-    req.socketIO = socketIO;
-    return next();
-  });
+
   app.use("/api/auth", auth);
   app.use("/api/user", user);
   app.use("/api/student", student);
@@ -87,11 +77,7 @@ if (cluster.isMaster) {
   app.use("/api/payment", payment);
   app.use("/api/mailer", mailer);
 
-  // app.listen(port, () => {
-  //   console.log(`Server is listening on port ${port}`);
-  // });
-
-  http.listen(port, () => {
-    console.log(`Server is running on port :: ${port}`);
+  app.listen(port, () => {
+    console.log(`Server is running on port : ${port}`);
   });
 }
