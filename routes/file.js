@@ -39,4 +39,28 @@ router.get("/pricing", async (req, res) => {
   res.sendFile(path.join(__dirname, "../upload/pricing.json"));
 });
 
+router.post("/file/class", (req, res) => {
+  const className = req.body.class;
+
+  switch (className) {
+    case "CLASS VI":
+      res.statusCode = 200;
+      res.header("Content-Type", "application/json");
+      res.sendFile(path.join(__dirname, "../upload/subjects/class_six.json"));
+      break;
+    case "CLASS VII":
+      res.statusCode = 200;
+      res.header("Content-Type", "application/json");
+      res.sendFile(path.join(__dirname, "../upload/subjects/class_seven.json"));
+      break;
+    case "CLASS VIII":
+      res.statusCode = 200;
+      res.header("Content-Type", "application/json");
+      res.sendFile(path.join(__dirname, "../upload/subjects/class_eight.json"));
+      break;
+    default:
+      null;
+  }
+});
+
 module.exports = router;

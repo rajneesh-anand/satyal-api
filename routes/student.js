@@ -1,4 +1,3 @@
-const { response } = require("express");
 const express = require("express");
 const prisma = require("../lib/prisma");
 const auth = require("../middleware/auth");
@@ -162,6 +161,56 @@ router.put("/:id", async (req, res) => {
     async () => {
       await prisma.$disconnect();
     };
+  }
+});
+
+router.post("/fetch-teachers", async (req, res) => {
+  const studentClass = req.body.class;
+  const studentSubject = req.body.subject;
+  console.log(req.body);
+  const result = await prisma.teacherkyc.findMany({
+    select: {
+      class: true,
+      subject: true,
+      email: true,
+    },
+  });
+
+  const listOfTeachers = result.reduce((acc, item) => {
+    const className = JSON.parse(item.class);
+    const classExists = className.find((itm) => itm.value === studentClass);
+    if (classExists) {
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+
+  if (listOfTeachers.length > 0) {
+    const listOfTeachersSubjectWise = listOfTeachers.reduce((acc, item) => {
+      const subjectName = JSON.parse(item.subject);
+      const subjectExists = subjectName.find(
+        (itm) => itm.value === studentSubject
+      );
+      if (subjectExists) {
+        acc.push(item.email);
+      }
+      return acc;
+    }, []);
+
+    console.log(listOfTeachersSubjectWise);
+
+    req.socketIO.on("connection", (socket) => {
+      console.log(`⚡: ${socket.id} user just connected!`);
+
+      socket.on("newEvent", (event) => {
+        socketIO.emit("newUserResponse", listOfTeachersSubjectWise);
+      });
+
+      socket.on("disconnect", () => {
+        socket.disconnect();
+        console.log("🔥: A user disconnected");
+      });
+    });
   }
 });
 

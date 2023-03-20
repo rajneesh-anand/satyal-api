@@ -3,6 +3,7 @@ const Minio = require("minio");
 const { IncomingForm } = require("formidable");
 const fs = require("fs");
 const prisma = require("../lib/prisma");
+const { hashSync, genSaltSync } = require("bcrypt");
 
 const router = express.Router();
 
@@ -28,9 +29,7 @@ const uploadPhoto = async (path, name) => {
   }
 };
 
-router.post("/kyc/:id", async (req, res) => {
-  const teacherId = req.params.id;
-
+router.post("/register", async (req, res) => {
   const data = await new Promise((resolve, reject) => {
     const form = new IncomingForm();
     form.parse(req, (err, fields, files) => {
@@ -39,7 +38,39 @@ router.post("/kyc/:id", async (req, res) => {
     });
   });
 
+  let emailExist = await prisma.user.count({
+    where: {
+      email: data.fields.email,
+    },
+  });
+
+  if (emailExist > 0) {
+    return res.status(403).json({
+      message: "The email is already registered !",
+    });
+  }
+
+  const salt = genSaltSync(10);
+  const hashedPassword = hashSync(data.fields.password, salt);
+
   try {
+    await prisma.user.create({
+      data: {
+        email: data.fields.email,
+        firstName: data.fields.fname,
+        lastName: data.fields.lname,
+        password: hashedPassword,
+        address: data.fields.address,
+        city: data.fields.city,
+        province: data.fields.province,
+        mobile: data.fields.mobile,
+        userType: data.fields.userType,
+        userStatus: "Active",
+        kycStatus:
+          data.fields.userType === "Teacher" ? "Kyc Pending" : "Not Required",
+      },
+    });
+
     if (Object.keys(data.files).length !== 0) {
       const citizenFirstPagePhotoUrl =
         data.fields.citizenFirst != "null"
@@ -93,13 +124,13 @@ router.post("/kyc/:id", async (req, res) => {
           bankBranch: data.fields.branch,
           accountName: data.fields.name,
           accountNumber: data.fields.accountNumber,
-          user: { connect: { id: Number(teacherId) } },
+          user: { connect: { email: data.fields.email } },
         },
       });
       if (result) {
         await prisma.user.update({
           where: {
-            id: Number(teacherId),
+            email: data.fields.email,
           },
           data: {
             kycStatus: "KYC Under Review",

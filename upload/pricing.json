@@ -7,7 +7,7 @@
     "plan_discounted_fee": 2500,
     "most_popular": true,
     "features": [
-      "This is point one",
+      "This is point one ",
       "This is point two",
       "This is point three",
       "This is point one",
@@ -22,7 +22,14 @@
     "most_popular": true,
     "plan_fee": 4500,
     "plan_discounted_fee": 3500,
-    "features": ["This is one ", "This is two", "This is three"]
+    "features": [
+      "This is point one",
+      "This is point two",
+      "This is point three",
+      "This is point one",
+      "This is point two",
+      "This is point three"
+    ]
   },
   {
     "id": 3,
@@ -32,24 +39,28 @@
     "plan_fee": 5500,
     "plan_discounted_fee": 4500,
     "features": [
-      "ghjgh jghjgh jhghg nfgnfgg fggf  ",
-      "This is two",
-      "This is three",
-      "kjfdhgjhdfg dkfjfkhgkjf dghjg dfkjghkjd g",
-      "fdmbmdfbg dfkjghkjh "
+      "This is point one",
+      "This is point two",
+      "This is point three",
+      "This is point one",
+      "This is point two",
+      "This is point three"
     ]
   },
   {
     "id": 4,
-    "plan_name": "Premium",
+    "plan_name": "Pro",
     "plan_description": "The essentials to provide your best work for clients.",
     "most_popular": false,
     "plan_fee": 5500,
     "plan_discounted_fee": 4500,
     "features": [
-      "ghjgh jghjgh jhghg nfgnfgg fggf  ",
-      "This is two",
-      "This is three"
+      "This is point one",
+      "This is point two",
+      "This is point three",
+      "This is point one",
+      "This is point two",
+      "This is point three"
     ]
   }
 ]

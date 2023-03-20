@@ -4,21 +4,32 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
 const totalCPUs = require("os").cpus().length;
+require("dotenv").config();
 
+// Server Port
+const app = express();
+const port = process.env.PORT || 8080;
+
+// api routes
 const user = require("./routes/user");
 const auth = require("./routes/auth");
 const student = require("./routes/student");
 const teacher = require("./routes/teacher");
 const test = require("./routes/test");
 const file = require("./routes/file");
+const payment = require("./routes/payment");
+const mailer = require("./routes/mailer");
 
-require("dotenv").config();
+// middelewere
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
+
+// Cors
 
 // let allowedDomains = [
-//   "https://vedas.vercel.app",
-//   "https://vedas-admin.vercel.app",
-//   "https://www.vedusone.com",
-//   "https://www.admin.vedusone.com",
 //   "https://admin.vedusone.com",
 //   "http://localhost:3000",
 // ];
@@ -36,6 +47,12 @@ require("dotenv").config();
 //   })
 // );
 
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
 if (cluster.isMaster) {
   // Fork workers.
   for (let i = 0; i < totalCPUs; i++) {
@@ -46,21 +63,20 @@ if (cluster.isMaster) {
     cluster.fork();
   });
 } else {
-  const app = express();
-  const port = process.env.PORT || 8080;
-  app.use(express.static(path.join(__dirname, "public")));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use(cookieParser());
+  const http = require("http").Server(app);
+  const socketIO = require("socket.io")(http, {
+    cors: {
+      origin: "http://localhost:3000",
+    },
+  });
 
-  app.use(
-    cors({
-      origin: "*",
-    })
-  );
   app.use((req, res, next) => {
     console.log(req.path, req.method);
-    next();
+    return next();
+  });
+  app.use((req, res, next) => {
+    req.socketIO = socketIO;
+    return next();
   });
   app.use("/api/auth", auth);
   app.use("/api/user", user);
@@ -68,8 +84,14 @@ if (cluster.isMaster) {
   app.use("/api/teacher", teacher);
   app.use("/api/test", test);
   app.use("/api", file);
+  app.use("/api/payment", payment);
+  app.use("/api/mailer", mailer);
 
-  app.listen(port, () => {
-    console.log(`Server is listening on port ${port}`);
+  // app.listen(port, () => {
+  //   console.log(`Server is listening on port ${port}`);
+  // });
+
+  http.listen(port, () => {
+    console.log(`Server is running on port :: ${port}`);
   });
 }
