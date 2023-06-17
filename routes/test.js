@@ -1,4 +1,5 @@
 const express = require("express");
+const Minio = require("minio");
 const { IncomingForm } = require("formidable");
 const fs = require("fs");
 const path = require("path");
@@ -8,6 +9,14 @@ const cloudinary = require("cloudinary").v2;
 
 const router = express.Router();
 const parser = new DatauriParser();
+
+var client = new Minio.Client({
+  endPoint: process.env.MINIO_HOST,
+  // port: 11066,
+  useSSL: false,
+  accessKey: process.env.MINIO_ACCESS_KEY,
+  secretKey: process.env.MINIO_SECRET_KEY,
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -61,6 +70,22 @@ router.post("/kyc/:id", async (req, res) => {
       await prisma.$disconnect();
     };
   }
+});
+
+router.get("/get-photos", async (req, res) => {
+  let photos = [];
+  let stream = await client.listObjectsV2("kyc");
+
+  stream.on("data", (obj) => {
+    photos.push(`http://${process.env.MINIO_HOST}/kyc/${obj.name}`);
+  });
+  stream.on("end", (obj) => {
+    return res.status(200).json({ photos });
+  });
+
+  stream.on("error", (err) => {
+    console.log(err);
+  });
 });
 
 module.exports = router;

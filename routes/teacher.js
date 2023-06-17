@@ -39,6 +39,7 @@ router.post("/register", async (req, res) => {
     });
   });
 
+  console.log(data);
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,
