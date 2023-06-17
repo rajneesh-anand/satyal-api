@@ -18,8 +18,9 @@ var client = new Minio.Client({
 const uploadPhoto = async (path, name) => {
   try {
     const content = await fs.promises.readFile(path);
-    const uploadResult = await client.putObject('testing', name, content);
-    const photoUrl = uploadResult ? `${process.env.MINIO_HOST}/testing/${name}` : null;
+    const uploadResult = await client.putObject('kyc', name, content);
+    const photoUrl = uploadResult ? `${process.env.MINIO_HOST}/kyc/${name}` : null;
+
     return photoUrl;
   } catch (err) {
     console.log(err.message);
@@ -67,6 +68,8 @@ router.post('/register', async (req, res) => {
         kycStatus: data.fields.userType === 'Teacher' ? 'Kyc Pending' : 'Not Required',
       },
     });
+
+    console.log(data);
 
     if (Object.keys(data.files).length !== 0) {
       const citizenFirstPagePhotoUrl =
