@@ -83,9 +83,12 @@ router.get("/get-photos", async (req, res) => {
     return res.status(200).json({ photos });
   });
 
-  stream.on("error", (err) => {
-    console.log(err);
-  });
+  // stream.on("error", (err) => {
+  //   console.log(err);
+  // });
+  console.log("test");
 });
+
+router.get("/hello", (req, res) => console.log(`first`));
 
 module.exports = router;
