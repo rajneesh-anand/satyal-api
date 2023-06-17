@@ -18,10 +18,11 @@ var client = new Minio.Client({
 const uploadPhoto = async (path, name) => {
   try {
     const content = await fs.promises.readFile(path);
-    const uploadResult = await client.putObject("testing", name, content);
+    const uploadResult = await client.putObject("kyc", name, content);
     const photoUrl = uploadResult
-      ? `${process.env.MINIO_HOST}/testing/${name}`
+      ? `${process.env.MINIO_HOST}/kyc/${name}`
       : null;
+
     return photoUrl;
   } catch (err) {
     console.log(err.message);
@@ -37,7 +38,12 @@ router.post("/register", async (req, res) => {
       resolve({ fields, files });
     });
   });
+// <<<<<<< HEAD
   // console.log(data);
+
+
+  // console.log(data)
+// >>>>>>> 6aa330cfd5ad50dfceff953100dd34920aee9908
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,

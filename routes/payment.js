@@ -84,11 +84,11 @@ router.post("/khalti", async (req, res) => {
         }
       );
 
-      await emailMailer.sendEmail({
-        email: userData.email,
-        firstName: userData.fname,
-        lastName: userData.lname,
-      });
+      // await emailMailer.sendEmail({
+      //   email: userData.email,
+      //   firstName: userData.fname,
+      //   lastName: userData.lname,
+      // });
       return res.status(200).json({
         message: "success",
         payment_url: data.payment_url,
