@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
       resolve({ fields, files });
     });
   });
-
+  // console.log(data);
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,
@@ -110,7 +110,7 @@ router.post("/register", async (req, res) => {
               data.files.degreeMaster.name
             )
           : "";
-
+        console.log('before updation data on minio');
       const result = await prisma.teacherkyc.create({
         data: {
           citizenPhotoFirstPage: citizenFirstPagePhotoUrl,
@@ -127,6 +127,8 @@ router.post("/register", async (req, res) => {
           user: { connect: { email: data.fields.email } },
         },
       });
+      console.log('after uploading teacherkyc');
+      console.log(result);
       if (result) {
         await prisma.user.update({
           where: {
