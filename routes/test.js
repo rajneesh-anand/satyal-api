@@ -1,11 +1,11 @@
-const express = require("express");
-const Minio = require("minio");
-const { IncomingForm } = require("formidable");
-const fs = require("fs");
-const path = require("path");
-const prisma = require("../lib/prisma");
-const DatauriParser = require("datauri/parser");
-const cloudinary = require("cloudinary").v2;
+const express = require('express');
+const Minio = require('minio');
+const { IncomingForm } = require('formidable');
+const fs = require('fs');
+const path = require('path');
+const prisma = require('../lib/prisma');
+const DatauriParser = require('datauri/parser');
+const cloudinary = require('cloudinary').v2;
 
 const router = express.Router();
 const parser = new DatauriParser();
@@ -26,7 +26,7 @@ cloudinary.config({
 
 const cloudinaryUpload = (file) => cloudinary.uploader.upload(file);
 
-router.post("/kyc/:id", async (req, res) => {
+router.post('/kyc/:id', async (req, res) => {
   const teacherId = req.params.id;
 
   const data = await new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ router.post("/kyc/:id", async (req, res) => {
     if (Object.keys(data.files).length !== 0) {
       const docContent = await fs.promises
         .readFile(data.files.document.path)
-        .catch((err) => console.error("Failed to read file", err));
+        .catch((err) => console.error('Failed to read file', err));
 
       let doc64 = parser.format(
         path.extname(data.files.document.name).toString(),
@@ -53,12 +53,12 @@ router.post("/kyc/:id", async (req, res) => {
         where: { id: Number(teacherId) },
         data: {
           kycDocumentType: data.fields.docType,
-          kycStatus: "KYC Under Review",
+          kycStatus: 'KYC Under Review',
           kycDocument: uploadResult.secure_url,
         },
       });
       return res.status(200).json({
-        msg: "success",
+        msg: 'success',
       });
     }
   } catch (error) {
@@ -72,20 +72,71 @@ router.post("/kyc/:id", async (req, res) => {
   }
 });
 
-router.get("/get-photos", async (req, res) => {
+router.get('/get-photos', async (req, res) => {
   let photos = [];
-  let stream = await client.listObjectsV2("kyc");
+  let stream = await client.listObjectsV2('kyc');
 
-  stream.on("data", (obj) => {
+  stream.on('data', (obj) => {
     photos.push(`http://${process.env.MINIO_HOST}/kyc/${obj.name}`);
   });
-  stream.on("end", (obj) => {
+  stream.on('end', (obj) => {
     return res.status(200).json({ photos });
   });
 
-  stream.on("error", (err) => {
+  stream.on('error', (err) => {
     console.log(err);
   });
+});
+
+// Get user details:
+router.get('/test-users', async (req, res) => {
+  try {
+    const user = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        address: true,
+      },
+    });
+    res.status(200).json({
+      msg: 'User data fetched successfully',
+      user,
+    });
+  } catch (error) {
+    res.status(200).json({
+      msg: 'User creation failed',
+      error: error.message,
+    });
+  }
+});
+
+// Edit user details:
+router.patch('/update-user/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { email, firstName, lastName, address } = req.body;
+
+  try {
+    const user = await prisma.user.update({
+      where: { id: Number(userId) },
+      data: {
+        email,
+        firstName,
+        lastName,
+        address,
+      },
+    });
+    res.status(200).json({
+      msg: 'User data updated successfully',
+      user,
+    });
+  } catch (error) {
+    res.status(200).json({
+      msg: 'User update failed',
+      error: error.message,
+    });
+  }
 });
 
 module.exports = router;
