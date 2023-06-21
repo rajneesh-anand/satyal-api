@@ -167,7 +167,7 @@ router.put("/:id", async (req, res) => {
 router.post("/fetch-teachers", async (req, res) => {
   const studentClass = req.body.class;
   const studentSubject = req.body.subject;
-  console.log(req.body);
+
   const result = await prisma.teacherkyc.findMany({
     select: {
       class: true,

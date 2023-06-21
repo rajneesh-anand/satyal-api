@@ -33,7 +33,7 @@ router.post("/khalti", async (req, res) => {
         address: userData.address,
         city: userData.city,
         province: JSON.stringify(userData.state),
-        class: JSON.stringify(userData.class),
+        className: JSON.stringify(userData.class),
         mobile: userData.mobile,
         userType: userType,
         userStatus: "Active",
