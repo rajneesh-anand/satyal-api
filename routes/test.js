@@ -86,6 +86,56 @@ router.get('/get-photos', async (req, res) => {
   stream.on('error', (err) => {
     console.log(err);
   });
+  console.log(first);
+  console.log('test');
+});
+
+router.get('/test-user', async (req, res) => {
+  try {
+    const result = await prisma.user.findMany({
+      select: {
+        email: true,
+        firstName: true,
+        lastName: true,
+        address: true,
+      },
+    });
+    console.log(result);
+    res.status(200).json({ data: result, message: 'success' });
+  } catch (error) {
+    console.log('error');
+    res.status(404).json({ message: error });
+  }
+});
+
+function fetchBooksFromMinio(req, res, bucketName) {
+  console.log(bucketName);
+  let photos = [];
+  let stream = client.listObjectsV2(bucketName);
+
+  stream.on('data', (obj) => {
+    photos.push(`http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`);
+  });
+  stream.on('end', (obj) => {
+    return res.status(200).json({ data: photos });
+  });
+}
+
+router.get('/book/:className', (req, res) => {
+  const studentCalss = req.params.className;
+  console.log(studentCalss);
+
+  switch (studentCalss) {
+    case 'CLASS VI':
+      fetchBooksFromMinio(req, res, 'books-6');
+      break;
+    case 'CLASS VII':
+      fetchBooksFromMinio(req, res, 'books-7');
+      break;
+    case 'CLASS VIII':
+      fetchBooksFromMinio(req, res, 'books-8');
+      break;
+  }
 });
 
 // Get user details:

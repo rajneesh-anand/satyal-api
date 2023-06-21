@@ -50,26 +50,29 @@ model Teacherkyc {
     bankBranch            String?
     accountName           String?
     accountNumber         String?
-    email                 String
-    user                  User     @relation(fields: [email], references: [email], onDelete: Cascade)
+    userId                Int
+    user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+
 }
 
 model User {
   id            Int     @default(autoincrement()) @id 
   email         String   @unique
   firstName     String
-  lastName      String? 
-  parent        String? 
+  lastName      String?  
   password      String?
   address       String?
   city          String?
+  parent        String?
   province      String?
-  class         String?
+  className     String?
   mobile        String?
   image         String?
   userType      String  
   userStatus    String
   kycStatus     String?
+  
   emailVerified DateTime?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at") 
@@ -115,3 +118,4 @@ model Testinomial{
   image     String?  
   createdAt     DateTime  @default(now()) @map(name: "created_at")
 }
+ 
