@@ -181,6 +181,7 @@ router.patch('/update-user/:id', async (req, res) => {
       user,
     });
   } catch (error) {
+    console.log(error);
     res.status(200).json({
       msg: 'User update failed',
       error: error.message,
