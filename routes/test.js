@@ -121,10 +121,11 @@ function fetchBooksFromMinio(req, res, bucketName) {
   });
 }
 
-router.get("/book/:classNameTest", (req, res) => {
-  const studentCalss = req.params.className;
+router.get("/book/:className", (req, res) => {
+  const studentClass = req.params.className;
+  console.log(studentClass);
 
-  switch (studentCalss) {
+  switch (studentClass) {
     case "CLASS VI":
       fetchBooksFromMinio(req, res, "books-6");
       break;
