@@ -39,10 +39,9 @@ router.get("/pricing", async (req, res) => {
   res.sendFile(path.join(__dirname, "../upload/pricing.json"));
 });
 
-router.post("/file/class", (req, res) => {
-  const className = req.body.class;
-
-  switch (className) {
+router.get("/file/class/:className", (req, res) => {
+  const studentClassName = req.params.className;
+  switch (studentClassName) {
     case "CLASS VI":
       res.statusCode = 200;
       res.header("Content-Type", "application/json");
