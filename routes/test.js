@@ -121,7 +121,7 @@ function fetchBooksFromMinio(req, res, bucketName) {
   });
 }
 
-router.get('/book/:className', (req, res) => {
+router.get('/book/:classNameTest', (req, res) => {
   const studentCalss = req.params.className;
 
   switch (studentCalss) {
@@ -181,7 +181,6 @@ router.patch('/update-user/:id', async (req, res) => {
       user,
     });
   } catch (error) {
-    console.log(error);
     res.status(200).json({
       msg: 'User update failed',
       error: error.message,
