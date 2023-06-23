@@ -121,7 +121,7 @@ function fetchBooksFromMinio(req, res, bucketName) {
   });
 }
 
-router.get("/book/:className", (req, res) => {
+router.get("/book/:classNameTest", (req, res) => {
   const studentCalss = req.params.className;
 
   switch (studentCalss) {
