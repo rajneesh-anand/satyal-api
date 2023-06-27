@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
     });
   });
 
-  console.log(data);
+  // console.log(data);
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,
@@ -120,8 +120,8 @@ router.post("/register", async (req, res) => {
           schoolIdentityCard: schoolIdentityPhotoUrl,
           bachelorDegree: bachelorDegreePhotoUrl,
           masterDegree: masterDegreePagePhotoUrl,
-          class: data.fields.class,
-          subject: data.fields.subjects,
+          classList: data.fields.class,
+          subjectList: data.fields.subjects,
           bankName: data.fields.bankName,
           bankBranch: data.fields.branch,
           accountName: data.fields.name,
