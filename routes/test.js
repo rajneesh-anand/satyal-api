@@ -108,31 +108,90 @@ router.get('/test-user', async (req, res) => {
   }
 });
 
-function fetchBooksFromMinio(req, res, bucketName) {
+const stripUrlDetails = (url) => {
+  // Extract the image endpoint, bucket name, and image name from the URL
+  const imageEndpoint = url.substring(0, url.indexOf('/', 7)); // Extract the base URL
+  const bucketName = url.substring(
+    url.indexOf('/', 7) + 1,
+    url.indexOf('/', url.indexOf('/', 7) + 1)
+  ); // Extract the bucket name
+  const imageName = url.substring(url.lastIndexOf('/') + 1); // Extract the image name
+
+  return { imageEndpoint, bucketName, imageName };
+};
+
+router.get('/image/:url', async (req, res) => {
+  try {
+    const { imageEndpoint, bucketName, imageName } = stripUrlDetails(req.params.url);
+    const expiration = 604800;
+
+    const authenticatedUrl = await client.presignedGetObject(
+      bucketName,
+      imageName,
+      expiration
+    );
+    const fullUrl = `${imageEndpoint}/${bucketName}/${imageName}${authenticatedUrl.query}`;
+    console.log(fullUrl);
+    res.json({ authenticatedUrl: fullUrl });
+  } catch (error) {
+    console.error('Error generating authenticated URL:', error);
+    res.status(500).json({ error: 'Failed to generate authenticated URL' });
+  }
+});
+
+async function fetchBooksFromMinio(req, res, bucketName) {
   console.log(bucketName);
-  let photos = [];
+  let booksAndImages = [];
+  let books = [];
+  let images = [];
   let stream = client.listObjectsV2(bucketName);
 
-  stream.on('data', (obj) => {
-    photos.push(`http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`);
+  stream.on('data', async (obj) => {
+    const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+
+    if (obj.name.endsWith('.jpg')) {
+      // Generate authenticated URL for the image
+      // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
+      // console.log(signedUrl);
+      // images.push(signedUrl);
+      images.push(url);
+    } else if (obj.name.endsWith('.pdf')) {
+      books.push(url);
+    }
+    booksAndImages.push(url);
   });
+
   stream.on('end', (obj) => {
-    return res.status(200).json({ data: photos });
+    // console.log('Books:', books);
+    // console.log('Images:', images);
+    return res.status(200).json({
+      data: {
+        books,
+        images,
+      },
+    });
   });
 }
 
-router.get('/book/:classNameTest', (req, res) => {
-  const studentCalss = req.params.className;
+router.get('/book/:studentClass', (req, res) => {
+  const studentClass = req.params.studentClass;
+  console.log(studentClass);
 
-  switch (studentCalss) {
+  switch (studentClass) {
     case 'CLASS VI':
-      fetchBooksFromMinio(req, res, 'books-6');
+      fetchBooksFromMinio(req, res, 'book-6');
       break;
     case 'CLASS VII':
-      fetchBooksFromMinio(req, res, 'books-7');
+      fetchBooksFromMinio(req, res, 'book-7');
       break;
     case 'CLASS VIII':
-      fetchBooksFromMinio(req, res, 'books-8');
+      fetchBooksFromMinio(req, res, 'book-8');
+      break;
+    case 'CLASS IX':
+      fetchBooksFromMinio(req, res, 'book-9');
+      break;
+    case 'CLASS X':
+      fetchBooksFromMinio(req, res, 'book-10');
       break;
   }
 });
