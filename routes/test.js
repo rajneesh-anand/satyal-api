@@ -12,8 +12,7 @@ const parser = new DatauriParser();
 
 var client = new Minio.Client({
   endPoint: process.env.MINIO_HOST,
-  // port: 11066,
-  // port: 9000,
+  port: 8080,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,

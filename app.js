@@ -73,7 +73,7 @@ if (cluster.isMaster) {
   app.use("/api/student", student);
   app.use("/api/teacher", teacher);
   app.use("/api/test", test);
-  app.use("/api", file);
+  app.use("/api/file", file);
   app.use("/api/payment", payment);
   app.use("/api/mailer", mailer);
 
