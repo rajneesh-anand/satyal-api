@@ -13,6 +13,7 @@ const parser = new DatauriParser();
 var client = new Minio.Client({
   endPoint: process.env.MINIO_HOST,
   // port: 11066,
+  // port: 9000,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,
@@ -140,38 +141,84 @@ router.get('/image/:url', async (req, res) => {
 });
 
 async function fetchBooksFromMinio(req, res, bucketName) {
-  console.log(bucketName);
-  let booksAndImages = [];
-  let books = [];
-  let images = [];
-  let stream = client.listObjectsV2(bucketName);
+  try {
+    console.log(bucketName);
+    let books = [];
+    let images = [];
+    let stream = client.listObjectsV2(bucketName);
 
-  stream.on('data', async (obj) => {
-    const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+    stream.on('data', async (obj) => {
+      const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
 
-    if (obj.name.endsWith('.jpg')) {
-      // Generate authenticated URL for the image
-      // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
-      // console.log(signedUrl);
-      // images.push(signedUrl);
-      images.push(url);
-    } else if (obj.name.endsWith('.pdf')) {
-      books.push(url);
-    }
-    booksAndImages.push(url);
-  });
-
-  stream.on('end', (obj) => {
-    // console.log('Books:', books);
-    // console.log('Images:', images);
-    return res.status(200).json({
-      data: {
-        books,
-        images,
-      },
+      if (obj.name.endsWith('.jpg')) {
+        // Generate authenticated URL for the image
+        // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
+        // console.log(signedUrl);
+        // images.push(signedUrl);
+        images.push(url);
+      } else if (obj.name.endsWith('.pdf')) {
+        books.push(url);
+      }
     });
-  });
+
+    stream.on('end', () => {
+      // console.log('Books:', books);
+      // console.log('Images:', images);
+      return res.status(200).json({
+        data: {
+          books,
+          images,
+        },
+      });
+    });
+
+    stream.on('error', (err) => {
+      console.error('Error while fetching objects from MinIO:', err);
+      return res.status(500).json({ error: 'Failed to fetch objects from MinIO' });
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 }
+
+// async function fetchBooksFromMinio(req, res, bucketName) {
+//   try {
+//     console.log(bucketName);
+//     let booksAndImages = [];
+//     let books = [];
+//     let images = [];
+//     let stream = client.listObjectsV2(bucketName);
+
+//     stream.on('data', async (obj) => {
+//       const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+
+//       if (obj.name.endsWith('.jpg')) {
+//         // Generate authenticated URL for the image
+//         // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
+//         // console.log(signedUrl);
+//         // images.push(signedUrl);
+//         images.push(url);
+//       } else if (obj.name.endsWith('.pdf')) {
+//         books.push(url);
+//       }
+//       booksAndImages.push(url);
+//     });
+
+//     stream.on('end', (obj) => {
+//       // console.log('Books:', books);
+//       // console.log('Images:', images);
+//       return res.status(200).json({
+//         data: {
+//           books,
+//           images,
+//         },
+//       });
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 router.get('/book/:studentClass', (req, res) => {
   const studentClass = req.params.studentClass;
