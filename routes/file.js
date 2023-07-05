@@ -1,35 +1,70 @@
 const express = require("express");
 const { IncomingForm } = require("formidable");
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
 const router = express.Router();
+const prisma = require("../lib/prisma");
 
-router.post("/pricing", async (req, res) => {
-  const data = await new Promise((resolve, reject) => {
-    const form = new IncomingForm();
-    form.parse(req, async (err, fields, files) => {
-      if (err) return reject(err);
-      resolve({ fields, files });
-    });
+async function getStudentSubjectsClassWise(req, res, className) {
+  const teachersList = await prisma.teacherkyc.findMany({
+    select: {
+      classList: true,
+      subjectList: true,
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
   });
 
-  const rawData = fs.readFileSync(data.files.uploadedFile.path);
-
-  try {
-    fs.writeFile(
-      path.join(__dirname, `../upload/pricing.json`),
-      rawData,
-      function (err) {
-        if (err) console.log(err);
-        return res.status(200).json({
-          status: "success",
-          message: "File uploaded successfully",
-        });
+  const studentSubjects = await fs.readFile(
+    path.join(__dirname, `../upload/subjects/${className}`),
+    "utf8",
+    (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
       }
-    );
-  } catch (error) {
-    console.log(error);
-    res.json(error);
+
+      return data;
+    }
+  );
+
+  return res.status(200).json({
+    teachersList,
+    subjectsList: studentSubjects ? JSON.parse(studentSubjects) : null,
+  });
+}
+
+router.get("/class/:className", async (req, res) => {
+  const studentClassName = req.params.className;
+  switch (studentClassName) {
+    case "CLASS VI":
+      await getStudentSubjectsClassWise(req, res, "class_six.json");
+      break;
+    case "CLASS VII":
+      await getStudentSubjectsClassWise(req, res, "class_seven.json");
+      break;
+    case "CLASS VIII":
+      await getStudentSubjectsClassWise(req, res, "class_eight.json");
+      break;
+    case "CLASS IX":
+      await getStudentSubjectsClassWise(req, res, "class_nine.json");
+      break;
+    case "CLASS X":
+      await getStudentSubjectsClassWise(req, res, "class_ten.json");
+      break;
+    case "CLASS XI":
+      await getStudentSubjectsClassWise(req, res, "class_eleven.json");
+      break;
+    case "CLASS XII":
+      await getStudentSubjectsClassWise(req, res, "class_twelve.json");
+      break;
+    default:
+      null;
   }
 });
 
@@ -37,29 +72,6 @@ router.get("/pricing", async (req, res) => {
   res.statusCode = 200;
   res.header("Content-Type", "application/json");
   res.sendFile(path.join(__dirname, "../upload/pricing.json"));
-});
-
-router.get("/file/class/:className", (req, res) => {
-  const studentClassName = req.params.className;
-  switch (studentClassName) {
-    case "CLASS VI":
-      res.statusCode = 200;
-      res.header("Content-Type", "application/json");
-      res.sendFile(path.join(__dirname, "../upload/subjects/class_six.json"));
-      break;
-    case "CLASS VII":
-      res.statusCode = 200;
-      res.header("Content-Type", "application/json");
-      res.sendFile(path.join(__dirname, "../upload/subjects/class_seven.json"));
-      break;
-    case "CLASS VIII":
-      res.statusCode = 200;
-      res.header("Content-Type", "application/json");
-      res.sendFile(path.join(__dirname, "../upload/subjects/class_eight.json"));
-      break;
-    default:
-      null;
-  }
 });
 
 module.exports = router;
