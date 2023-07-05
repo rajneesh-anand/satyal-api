@@ -147,33 +147,42 @@ async function fetchBooksFromMinio(req, res, bucketName) {
     let stream = client.listObjectsV2(bucketName);
 
     stream.on('data', async (obj) => {
-      const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+      // Generate authenticated URL for the image
+      const expiresIn = 3600; // Set the expiration time to 1 hour (3600 seconds)
+      const signedUrl = await client.presignedGetObject(bucketName, obj.name, expiresIn);
 
-      if (obj.name.endsWith('.jpg')) {
-        // Generate authenticated URL for the image
-        // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
-        // console.log(signedUrl);
-        // images.push(signedUrl);
-        images.push(url);
+      // const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+
+      if (
+        obj.name.endsWith('.png') ||
+        obj.name.endsWith('.jpg') ||
+        obj.name.endsWith('.jpeg')
+      ) {
+        images.push(signedUrl);
       } else if (obj.name.endsWith('.pdf')) {
-        books.push(url);
+        books.push(signedUrl);
       }
     });
 
-    stream.on('end', () => {
-      // console.log('Books:', books);
-      // console.log('Images:', images);
-      return res.status(200).json({
-        data: {
-          books,
-          images,
-        },
+    await new Promise((resolve, reject) => {
+      stream.on('end', () => {
+        // console.log('Books:', books);
+        // console.log('Images:', images);
+        resolve();
+      });
+
+      stream.on('error', (err) => {
+        console.error('Error while fetching objects from MinIO:', err);
+        reject(err);
+        // return res.status(500).json({ error: 'Failed to fetch objects from MinIO' });
       });
     });
 
-    stream.on('error', (err) => {
-      console.error('Error while fetching objects from MinIO:', err);
-      return res.status(500).json({ error: 'Failed to fetch objects from MinIO' });
+    return res.status(200).json({
+      data: {
+        books,
+        images,
+      },
     });
   } catch (error) {
     console.log(error);
