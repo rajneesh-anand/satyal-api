@@ -10,12 +10,7 @@ router.get('/',async(req,res)=>{
      }
      res.status(200).type('json').json(JSON.parse(data));
     })
-    // try{
-    //     let response= await fs.readFile(path.join(__dirname,'../','upload','/','pricing.json')).toString();
-    //     res.status(200).type('json').json(response);
-    // }catch(err){
-    //     res.status(400).type('json').json(err)
-    // }
+    
   
 })
 
