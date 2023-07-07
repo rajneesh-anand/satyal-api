@@ -6,13 +6,14 @@ const path = require("path");
 const prisma = require("../lib/prisma");
 const DatauriParser = require("datauri/parser");
 const cloudinary = require("cloudinary").v2;
+const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const router = express.Router();
 const parser = new DatauriParser();
 
 var client = new Minio.Client({
   endPoint: process.env.MINIO_HOST,
-  // port: 11066,
+  port: 8080,
   useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY,
   secretKey: process.env.MINIO_SECRET_KEY,
@@ -86,8 +87,6 @@ router.get("/get-photos", async (req, res) => {
   // stream.on("error", (err) => {
   //   console.log(err);
   // });
-  console.log(first);
-  console.log("test");
 });
 
 router.get("/test-user", async (req, res) => {
@@ -127,14 +126,57 @@ router.get("/book/:className", (req, res) => {
 
   switch (studentClass) {
     case "CLASS VI":
-      fetchBooksFromMinio(req, res, "books-6");
+      fetchBooksFromMinio(req, res, "book-6");
       break;
     case "CLASS VII":
-      fetchBooksFromMinio(req, res, "books-7");
+      fetchBooksFromMinio(req, res, "book-7");
       break;
     case "CLASS VIII":
-      fetchBooksFromMinio(req, res, "books-8");
+      fetchBooksFromMinio(req, res, "book-8");
       break;
+  }
+});
+
+async function getQuestions(sheetTitle) {
+  if (
+    !(
+      process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL &&
+      process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY &&
+      process.env.GOOGLE_SPREADSHEET_SATYAL
+    )
+  ) {
+    throw new Error("forbidden");
+  }
+
+  const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_SATYAL);
+  await doc.useServiceAccountAuth({
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY.replace(
+      /\\n/gm,
+      "\n"
+    ),
+  });
+  await doc.loadInfo();
+  const sheet = doc.sheetsByTitle[sheetTitle]; // or use doc.sheetsById[id]
+  const rows = await sheet.getRows(); // can pass in { limit, offset }
+
+  const products = rows?.map(({ Subject, Chapter_Name, Chapter_Number }) => ({
+    Subject,
+    Chapter_Name,
+    Chapter_Number,
+  }));
+  return products;
+}
+
+router.get("/questions/:className", async (req, res) => {
+  const sheetName = req.params.className;
+  try {
+    const data = await getQuestions(sheetName);
+
+    return res.status(200).json({ questions: data });
+  } catch (e) {
+    console.log(e.message);
+    return res.status(202).json({ products: null });
   }
 });
 
