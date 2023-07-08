@@ -195,43 +195,6 @@ async function fetchBooksFromMinio(req, res, bucketName) {
   }
 }
 
-// async function fetchBooksFromMinio(req, res, bucketName) {
-//   try {
-//     console.log(bucketName);
-//     let booksAndImages = [];
-//     let books = [];
-//     let images = [];
-//     let stream = client.listObjectsV2(bucketName);
-
-//     stream.on('data', async (obj) => {
-//       const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
-
-//       if (obj.name.endsWith('.jpg')) {
-//         // Generate authenticated URL for the image
-//         // const signedUrl = await client.presignedGetObject(bucketName, obj.name);
-//         // console.log(signedUrl);
-//         // images.push(signedUrl);
-//         images.push(url);
-//       } else if (obj.name.endsWith('.pdf')) {
-//         books.push(url);
-//       }
-//       booksAndImages.push(url);
-//     });
-
-//     stream.on('end', (obj) => {
-//       // console.log('Books:', books);
-//       // console.log('Images:', images);
-//       return res.status(200).json({
-//         data: {
-//           books,
-//           images,
-//         },
-//       });
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
 
 router.get("/book/:studentClass", (req, res) => {
   const studentClass = req.params.studentClass;
@@ -253,6 +216,7 @@ router.get("/book/:studentClass", (req, res) => {
       fetchBooksFromMinio(req, res, "book-10");
       break;
   }
+ 
 });
 
 async function getQuestions(sheetTitle) {
