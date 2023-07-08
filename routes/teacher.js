@@ -16,6 +16,7 @@ var client = new Minio.Client({
 });
 
 const uploadPhoto = async (path, name) => {
+  
   try {
     const content = await fs.promises.readFile(path);
     const uploadResult = await client.putObject('kyc', name, content);
@@ -57,11 +58,18 @@ router.post('/register', async (req, res) => {
       data: {
         email: data.fields.email,
         firstName: data.fields.fname,
+        middleName: data.fields.mname,
         lastName: data.fields.lname,
         password: hashedPassword,
         address: data.fields.address,
         city: data.fields.city,
         province: data.fields.province,
+        schoolName: data.fields.schoolName,
+        schoolContact: data.fields.schoolContact,
+        schoolAddress: data.fields.schoolAddress,
+        schoolCity: data.fields.schoolCity,
+        schoolProvince: data.fields.schoolProvince,
+        mobile: data.fields.mobile,
         mobile: data.fields.mobile,
         userType: data.fields.userType,
         userStatus: 'Active',
@@ -69,9 +77,9 @@ router.post('/register', async (req, res) => {
       },
     });
 
-    console.log(data);
 
     if (Object.keys(data.files).length !== 0) {
+     
       const citizenFirstPagePhotoUrl =
         data.fields.citizenFirst != 'null'
           ? await uploadPhoto(data.files.citizenFirst.path, data.files.citizenFirst.name)
@@ -109,11 +117,10 @@ router.post('/register', async (req, res) => {
           schoolIdentityCard: schoolIdentityPhotoUrl,
           bachelorDegree: bachelorDegreePhotoUrl,
           masterDegree: masterDegreePagePhotoUrl,
-          classList: data.fields.class,
           subjectList: data.fields.subjects,
           bankName: data.fields.bankName,
           bankBranch: data.fields.branch,
-          accountName: data.fields.name,
+          accountName: data.fields.accountName,
           accountNumber: data.fields.accountNumber,
           user: { connect: { email: data.fields.email } },
         },
@@ -169,3 +176,4 @@ router.get('/:id', async (req, res) => {
 });
 
 module.exports = router;
+

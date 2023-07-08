@@ -27,6 +27,7 @@
     "express-validator": "^6.14.0",
     "formidable": "^1.2.2",
     "fuse.js": "^6.5.3",
+    "google-spreadsheet": "^3.3.0",
     "jsonwebtoken": "^8.5.1",
     "minio": "^7.0.32",
     "reflect-metadata": "^0.1.13",
