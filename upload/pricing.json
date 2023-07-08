@@ -1,66 +1,138 @@
 [
   {
     "id": 1,
-    "plan_name": "Starter",
+    "plan_name": "Monthly",
     "plan_description": "The essentials to providenjngj ,mmnh your best work for clients.",
-    "plan_fee": 3500,
-    "plan_discounted_fee": 2500,
-    "most_popular": true,
+    "plan_fee": "350",
+    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_discounted_fee": "350",
+    "most_popular": false,
     "features": [
-      "This is point one ",
-      "This is point two",
-      "This is point three",
-      "This is point one",
-      "This is point two",
-      "This is point three"
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
     ]
   },
   {
     "id": 2,
-    "plan_name": "Regular",
+    "plan_name": "Quarterly",
     "plan_description": "The essentials to provide your best work for clients.",
-    "most_popular": true,
-    "plan_fee": 4500,
-    "plan_discounted_fee": 3500,
+    "most_popular": false,
+    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_fee": "890",
+    "plan_discounted_fee": "890",
     "features": [
-      "This is point one",
-      "This is point two",
-      "This is point three",
-      "This is point one",
-      "This is point two",
-      "This is point three"
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
     ]
   },
   {
     "id": 3,
-    "plan_name": "Premium",
+    "plan_name": "Half Yearly",
     "plan_description": "The essentials to provide your best work for clients.",
-    "most_popular": false,
-    "plan_fee": 5500,
-    "plan_discounted_fee": 4500,
+    "most_popular": true,
+    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_fee": "1,700",
+    "plan_discounted_fee": "1,700",
     "features": [
-      "This is point one",
-      "This is point two",
-      "This is point three",
-      "This is point one",
-      "This is point two",
-      "This is point three"
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
     ]
   },
   {
     "id": 4,
-    "plan_name": "Pro",
+    "plan_name": "Yearly",
     "plan_description": "The essentials to provide your best work for clients.",
     "most_popular": false,
-    "plan_fee": 5500,
-    "plan_discounted_fee": 4500,
+    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_fee": "3,320",
+    "plan_discounted_fee": "3,320",
     "features": [
-      "This is point one",
-      "This is point two",
-      "This is point three",
-      "This is point one",
-      "This is point two",
-      "This is point three"
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
+    ]
+  }, 
+   {
+    "id": 5,
+    "plan_name": "Monthly",
+    "plan_description": "The essentials to providenjngj ,mmnh your best work for clients.",
+    "plan_fee": "170",
+    "plan_Classes":["CLASS V","CLASS VIII","CLASS X"],
+    "plan_discounted_fee": "170",
+    "most_popular": false,
+    "features": [
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
+    ]
+  },
+  {
+    "id": 6,
+    "plan_name": "Quarterly",
+    "plan_description": "The essentials to provide your best work for clients.",
+    "most_popular": false,
+    "plan_Classes":["CLASS V","CLASS VIII","CLASS X"],
+    "plan_fee": "350",
+    "plan_discounted_fee": "350",
+    "features": [
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
+    ]
+  },
+  {
+    "id": 7,
+    "plan_name": "Half Yearly",
+    "plan_description": "The essentials to provide your best work for clients.",
+    "most_popular": true,
+    "plan_Classes":["CLASS V","CLASS VIII","CLASS X"],
+    "plan_fee": "890",
+    "plan_discounted_fee": "890",
+    "features": [
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
+    ]
+  },
+  {
+    "id": 8,
+    "plan_name": "Yearly",
+    "plan_description": "The essentials to provide your best work for clients.",
+    "most_popular": false,
+    "plan_Classes":["CLASS V","CLASS VIII","CLASS X"],
+    "plan_fee": "1,700",
+    "plan_discounted_fee": "1,700",
+    "features": [
+      "RECEIVE ONLINE CLASSES FROM YOUR SCHOOL TEACHER ANYWHERE GLOBALLY!",
+      "DO ONLINE TEST AS PER TEACHER’S HOSTING!",
+      "UNLIMITED PRACTICE QUESTION!",
+      "SMART ANIMATED VIDEO CLASS!",
+      "RECEIVE ONE-TO-ONE TUITION FROM MORE THAN 100+ TEACHERS AT AN ADDITIONAL COST IF NECESSARY!",
+      "E-BOOKS FROM SATYAL PUBLICATION:"
     ]
   }
 ]

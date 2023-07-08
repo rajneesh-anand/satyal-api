@@ -44,7 +44,6 @@ model Teacherkyc {
     schoolIdentityCard    String?
     bachelorDegree        String?
     masterDegree          String?
-    classList             String?
     subjectList           String?
     bankName              String?
     bankBranch            String?
@@ -60,18 +59,25 @@ model User {
   id            Int     @default(autoincrement()) @id 
   email         String   @unique
   firstName     String
-  lastName      String?  
-  password      String?
-  address       String?
-  city          String?
+  middleName    String?
+  lastName      String 
+  password      String
+  address       String
+  city          String
   parent        String?
-  province      String?
+  parentContact String?
+  province      String
   className     String?
-  mobile        String?
+  mobile        String
   image         String?
   userType      String  
   userStatus    String
   kycStatus     String?
+  schoolName    String?
+  schoolContact String?
+  schoolAddress String?
+  schoolCity    String?
+  schoolProvince String?
   
   emailVerified DateTime?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
