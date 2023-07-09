@@ -140,84 +140,99 @@ router.get("/image/:url", async (req, res) => {
   }
 });
 
-async function fetchBooksFromMinio(req, res, bucketName) {
-  try {
-    console.log(bucketName);
-    let books = [];
-    let images = [];
-    let stream = client.listObjectsV2(bucketName);
+// async function fetchBooksFromMinio(req, res, bucketName) {
+//   try {
+//     console.log(bucketName);
+//     let books = [];
+//     let images = [];
+//     let stream = client.listObjectsV2(bucketName);
 
-    stream.on("data", async (obj) => {
-      // Generate authenticated URL for the image
-      const expiresIn = 3600; // Set the expiration time to 1 hour (3600 seconds)
-      const signedUrl = await client.presignedGetObject(
-        bucketName,
-        obj.name,
-        expiresIn
-      );
+//     stream.on("data", async (obj) => {
+//       // Generate authenticated URL for the image
+//       const expiresIn = 3600; // Set the expiration time to 1 hour (3600 seconds)
+//       const signedUrl = await client.presignedGetObject(
+//         bucketName,
+//         obj.name,
+//         expiresIn
+//       );
 
-      // const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
+//       // const url = `http://${process.env.MINIO_HOST}/${bucketName}/${obj.name}`;
 
-      if (
-        obj.name.endsWith(".png") ||
-        obj.name.endsWith(".jpg") ||
-        obj.name.endsWith(".jpeg")
-      ) {
-        images.push(signedUrl);
-      } else if (obj.name.endsWith(".pdf")) {
-        books.push(signedUrl);
-      }
-    });
+//       if (
+//         obj.name.endsWith(".png") ||
+//         obj.name.endsWith(".jpg") ||
+//         obj.name.endsWith(".jpeg")
+//       ) {
+//         images.push(signedUrl);
+//       } else if (obj.name.endsWith(".pdf")) {
+//         books.push(signedUrl);
+//       }
+//     });
 
-    await new Promise((resolve, reject) => {
-      stream.on("end", () => {
-        // console.log('Books:', books);
-        // console.log('Images:', images);
-        resolve();
-      });
+//     await new Promise((resolve, reject) => {
+//       stream.on("end", () => {
+//         // console.log('Books:', books);
+//         // console.log('Images:', images);
+//         resolve();
+//       });
 
-      stream.on("error", (err) => {
-        console.error("Error while fetching objects from MinIO:", err);
-        reject(err);
-        // return res.status(500).json({ error: 'Failed to fetch objects from MinIO' });
-      });
-    });
+//       stream.on("error", (err) => {
+//         console.error("Error while fetching objects from MinIO:", err);
+//         reject(err);
+//         // return res.status(500).json({ error: 'Failed to fetch objects from MinIO' });
+//       });
+//     });
 
-    return res.status(200).json({
-      data: {
-        books,
-        images,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-}
+//     return res.status(200).json({
+//       data: {
+//         books,
+//         images,
+//       },
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// }
 
 
-router.get("/book/:studentClass", (req, res) => {
-  const studentClass = req.params.studentClass;
+// router.get("/book/:studentClass", (req, res) => {
+//   const studentClass = req.params.studentClass;
 
-  switch (studentClass) {
-    case "CLASS VI":
-      fetchBooksFromMinio(req, res, "book-6");
-      break;
-    case "CLASS VII":
-      fetchBooksFromMinio(req, res, "book-7");
-      break;
-    case "CLASS VIII":
-      fetchBooksFromMinio(req, res, "book-8");
-      break;
-    case "CLASS IX":
-      fetchBooksFromMinio(req, res, "book-9");
-      break;
-    case "CLASS X":
-      fetchBooksFromMinio(req, res, "book-10");
-      break;
-  }
+//   switch (studentClass) {
+//     case "CLASS I":
+//       fetchBooksFromMinio(req, res, "book-1");
+//       break;
+//     case "CLASS II":
+//       fetchBooksFromMinio(req, res, "book-2");
+//       break;
+//     case "CLASS III":
+//       fetchBooksFromMinio(req, res, "book-3");
+//       break;
+//     case "CLASS IV":
+//       fetchBooksFromMinio(req, res, "book-4");
+//       break;
+//     case "CLASS V":
+//       fetchBooksFromMinio(req, res, "book-5");
+//       break;
+//     case "CLASS VI":
+//       fetchBooksFromMinio(req, res, "book-6");
+//       break;
+//     case "CLASS VII":
+//       fetchBooksFromMinio(req, res, "book-7");
+//       break;
+//     case "CLASS VIII":
+//       fetchBooksFromMinio(req, res, "book-8");
+//       break;
+//     case "CLASS IX":
+//       fetchBooksFromMinio(req, res, "book-9");
+//       break;
+//     case "CLASS X":
+//       fetchBooksFromMinio(req, res, "book-10");
+//       break;
+//   }
  
-});
+// });
 
 async function getQuestions(sheetTitle) {
   if (
