@@ -21,6 +21,8 @@ const payment = require("./routes/payment");
 const mailer = require("./routes/mailer");
 const pricing=require("./routes/pricing");
 const books=require("./routes/books");
+const questions=require('./routes/questions');
+
 // middelewere
 
 app.use(express.json());
@@ -79,6 +81,7 @@ if (cluster.isMaster) {
   app.use("/api/mailer", mailer);
   app.use("/api/pricing", pricing);
   app.use('/api/books',books);
+  app.use("/api/questions",questions);
   app.listen(port, () => {
     console.log(`Server is running on port : ${port}`);
   });
