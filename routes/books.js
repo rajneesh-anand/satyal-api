@@ -70,6 +70,15 @@ async function fetchBooksFromMinio(req, res, bucketName) {
     const studentClass = req.params.studentClass;
   
     switch (studentClass) {
+      case "CLASS Nursery":
+        fetchBooksFromMinio(req, res, "book-n");
+        break;
+        case "CLASS LKG":
+        fetchBooksFromMinio(req, res, "book-l");
+        break;
+        case "CLASS UKG":
+        fetchBooksFromMinio(req, res, "book-u");
+        break;
       case "CLASS I":
         fetchBooksFromMinio(req, res, "book-1");
         break;

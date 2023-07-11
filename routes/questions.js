@@ -45,13 +45,13 @@ async function getQuestions(sheetTitle) {
   }
 function convertClass(studentClass){
     switch(studentClass){
-        case'CLASS N':
+        case'CLASS Nursery':
         return'class-n';
         
-        case'CLASS L':
+        case'CLASS LKG':
         return'class-l';
         
-        case'CLASS U':
+        case'CLASS UKG':
         return'class-u';
         
         case'CLASS I':
