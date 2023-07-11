@@ -4,7 +4,7 @@
     "plan_name": "Monthly",
     "plan_description": "The essentials to providenjngj ,mmnh your best work for clients.",
     "plan_fee": "350",
-    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_Classes":["CLASS Nursery","CLASS LKG","CLASS UKG","CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
     "plan_discounted_fee": "350",
     "most_popular": false,
     "features": [
@@ -21,7 +21,7 @@
     "plan_name": "Quarterly",
     "plan_description": "The essentials to provide your best work for clients.",
     "most_popular": false,
-    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_Classes":["CLASS Nursery","CLASS LKG","CLASS UKG","CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
     "plan_fee": "890",
     "plan_discounted_fee": "890",
     "features": [
@@ -38,7 +38,7 @@
     "plan_name": "Half Yearly",
     "plan_description": "The essentials to provide your best work for clients.",
     "most_popular": true,
-    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_Classes":["CLASS Nursery","CLASS LKG","CLASS UKG","CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
     "plan_fee": "1,700",
     "plan_discounted_fee": "1,700",
     "features": [
@@ -55,7 +55,7 @@
     "plan_name": "Yearly",
     "plan_description": "The essentials to provide your best work for clients.",
     "most_popular": false,
-    "plan_Classes":["CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
+    "plan_Classes":["CLASS Nursery","CLASS LKG","CLASS UKG","CLASS I","CLASS II","CLASS III","CLASS IV","CLASS VI","CLASS VII","CLASS IX"],
     "plan_fee": "3,320",
     "plan_discounted_fee": "3,320",
     "features": [
