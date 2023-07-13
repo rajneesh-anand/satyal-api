@@ -43,95 +43,6 @@ async function getQuestions(sheetTitle) {
   return products;
 }
 
-function convertClass(studentClass) {
-  switch (studentClass) {
-    case 'CLASS Nursery':
-      return 'class-n';
-
-    case 'CLASS LKG':
-      return 'class-l';
-
-    case 'CLASS UKG':
-      return 'class-u';
-
-    case 'CLASS I':
-      return 'class-1';
-
-    case 'CLASS II':
-      return 'class-2';
-
-    case 'CLASS III':
-      return 'class-3';
-
-    case 'CLASS IV':
-      return 'class-4';
-
-    case 'CLASS V':
-      return 'class-5';
-
-    case 'CLASS VI':
-      return 'class-6';
-
-    case 'CLASS VII':
-      return 'class-7';
-
-    case 'CLASS VIII':
-      return 'class-8';
-
-    case 'CLASS IX':
-      return 'class-9';
-
-    case 'CLASS X':
-      return 'class-10';
-  }
-}
-
-function convertClassToBucketName(studentClass) {
-  switch (studentClass) {
-    case 'class-n':
-      return 'question-n';
-
-    case 'class-l':
-      return 'question-l';
-
-    case 'class-u':
-      return 'question-u';
-
-    case 'class-1':
-      return 'question-1';
-
-    case 'class-2':
-      return 'question-2';
-
-    case 'class-3':
-      return 'question-3';
-
-    case 'class-4':
-      return 'question-4';
-
-    case 'class-5':
-      return 'question-5';
-
-    case 'class-6':
-      return 'question-6';
-
-    case 'class-7':
-      return 'question-7';
-
-    case 'class-8':
-      return 'question-8';
-
-    case 'class-9':
-      return 'question-9';
-
-    case 'class-10':
-      return 'question-10';
-
-    default:
-      return null;
-  }
-}
-
 async function fetchQuestionImagesFromMinio(questions, bucketName, subject) {
   try {
     let updatedQuestions = [];
@@ -163,10 +74,6 @@ async function fetchQuestionImagesFromMinio(questions, bucketName, subject) {
 route.get('/:className/:subject', async (req, res) => {
   const className = req.params.className;
   const subjectQuery = req.params.subject;
-  //synchronizing user send classname to googleSheet className
-  // let googleSpreadClass = convertClass(className);
-  //synchronizing user send classname to minio bucketName
-  // let bucketName = convertClassToBucketName(googleSpreadClass);
 
   // className === bucketName;
   // subject === folder name inside bucketName
