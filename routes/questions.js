@@ -132,14 +132,14 @@ function convertClassToBucketName(studentClass) {
   }
 }
 
-async function fetchQuestionImagesFromMinio(questions, bucketName) {
+async function fetchQuestionImagesFromMinio(questions, bucketName, subject) {
   try {
     let updatedQuestions = [];
 
     for (const question of questions) {
       if (question.Image_Link) {
         const fileName = question.Image_Link;
-        const fullFileName = `English-Vol-3/${fileName}`;
+        const fullFileName = `${subject}/${fileName}`;
         const signedUrl = await client.presignedGetObject(bucketName, fullFileName);
 
         const updatedQuestion = {
@@ -164,17 +164,22 @@ route.get('/:className/:subject', async (req, res) => {
   const className = req.params.className;
   const subjectQuery = req.params.subject;
   //synchronizing user send classname to googleSheet className
-  let googleSpreadClass = convertClass(className);
+  // let googleSpreadClass = convertClass(className);
   //synchronizing user send classname to minio bucketName
-  let bucketName = convertClassToBucketName(googleSpreadClass);
+  // let bucketName = convertClassToBucketName(googleSpreadClass);
+
+  // className === bucketName;
+  // subject === folder name inside bucketName
+  // front should send subject name as folder name inside bucketName and className as bucketName
 
   try {
-    let data = await getQuestions(googleSpreadClass);
+    let data = await getQuestions(className);
     let filterData_withSubject = data.filter((item) => item.Subject == subjectQuery);
 
     const updatedQuestions = await fetchQuestionImagesFromMinio(
       filterData_withSubject,
-      bucketName
+      className,
+      subjectQuery
     );
     console.log(updatedQuestions);
 
