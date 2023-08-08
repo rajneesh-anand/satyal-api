@@ -88,7 +88,7 @@ route.get('/:className/:subject', async (req, res) => {
       className,
       subjectQuery
     );
-    console.log(updatedQuestions);
+    // console.log(updatedQuestions);
 
     res.status(200).type('json').json({ questions: updatedQuestions });
   } catch (err) {

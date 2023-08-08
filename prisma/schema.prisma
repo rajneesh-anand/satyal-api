@@ -64,11 +64,11 @@ model User {
   password      String
   address       String
   city          String
-  parent        String?
-  parentContact String?
+  parentName        String?
+  parentContactNumber String?
   province      String
-  className     String?
-  mobile        String
+  studentClass     String?
+  userContactNumber    String
   image         String?
   userType      String  
   userStatus    String

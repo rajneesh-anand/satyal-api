@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
       resolve({ fields, files });
     });
   });
-
+ 
   let emailExist = await prisma.user.count({
     where: {
       email: data.fields.email,
@@ -57,9 +57,9 @@ router.post('/register', async (req, res) => {
     await prisma.user.create({
       data: {
         email: data.fields.email,
-        firstName: data.fields.fname,
-        middleName: data.fields.mname,
-        lastName: data.fields.lname,
+        firstName: data.fields.firstName,
+        middleName: data.fields.middleName,
+        lastName: data.fields.lastName,
         password: hashedPassword,
         address: data.fields.address,
         city: data.fields.city,
@@ -69,8 +69,7 @@ router.post('/register', async (req, res) => {
         schoolAddress: data.fields.schoolAddress,
         schoolCity: data.fields.schoolCity,
         schoolProvince: data.fields.schoolProvince,
-        mobile: data.fields.mobile,
-        mobile: data.fields.mobile,
+        userContactNumber: data.fields.userContactNumber,
         userType: data.fields.userType,
         userStatus: 'Active',
         kycStatus: data.fields.userType === 'Teacher' ? 'Kyc Pending' : 'Not Required',
