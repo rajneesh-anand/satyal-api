@@ -23,8 +23,8 @@ const pricing=require("./routes/pricing");
 const books=require("./routes/books");
 const questions=require('./routes/questions');
 const profile=require('./routes/profile');
-// middelewere
 
+// middelewere
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
