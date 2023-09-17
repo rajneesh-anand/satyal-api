@@ -86,6 +86,8 @@ model User {
   sessions      Session[]
   verificationTokens    VerificationToken[]
   teacherkycs   Teacherkyc[]
+  onlineClassesTaught OnlineClass[] 
+  onlineClassesEnrolled StudentsInOnlineClass[] 
 }
 
 model VerificationToken {
@@ -124,4 +126,46 @@ model Testinomial{
   image     String?  
   createdAt     DateTime  @default(now()) @map(name: "created_at")
 }
+
+
+model OnlineClass {
+  id                  Int      @default(autoincrement()) @id
+  onlineClassName     String   // The name of the online class
+  onlineClassGrade    String   // The grade/level of the class (e.g., 10th Grade)
+  onlineClassSection  String?  // Optional section within the grade
+  teacher             User     @relation(fields: [teacherId], references: [id])
+  teacherId           Int      // Foreign key to User (teacher)
+  enrollCode          String   @unique // A unique code for students to enroll
+  createdAt           DateTime @default(now())
+
+  notes               Note[]
+  worksheets          Worksheet[]
+  students            StudentsInOnlineClass[] // Many-to-many relation with User
+}
+
+model StudentsInOnlineClass {
+  id         Int    @default(autoincrement()) @id
+  user       User   @relation(fields: [userId], references: [id])
+  userId     Int    // Foreign key to User (student)
+  onlineClassId Int  // Foreign key to OnlineClass
+  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
+}
+
+model Note {
+  id         Int      @default(autoincrement()) @id
+  content    String   // The content of the note
+  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
+  onlineClassId Int    // Foreign key to OnlineClass
+  createdAt  DateTime @default(now())
+}
+
+model Worksheet {
+  id         Int      @default(autoincrement()) @id
+  title      String   // The title of the worksheet
+  content    String   // The content of the worksheet
+  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
+  onlineClassId Int    // Foreign key to OnlineClass
+  createdAt  DateTime @default(now())
+}
+
  
