@@ -1,12 +1,25 @@
-// onlineClassController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const crypto = require('crypto');
 
 // Create a new online class
 let createClass = async (req, res) => {
   try {
     // Extract data from the request body
     const { onlineClassName, onlineClassGrade, onlineClassSection, teacherId } = req.body;
+
+    console.log('Received teacherId:', teacherId);
+
+    // Verify that the teacherId exists in the User table
+    const teacherExists = await prisma.user.findUnique({
+      where: { id: teacherId },
+    });
+
+    if (!teacherExists) {
+      return res
+        .status(400)
+        .json({ error: 'Teacher with the provided ID does not exist.' });
+    }
 
     // Generate a unique code for enrolling
     const enrollCode = generateEnrollmentCode();
@@ -98,8 +111,22 @@ let createClass = async (req, res) => {
 // };
 
 // Utility function to generate a random enrollment code
-// function generateEnrollmentCode() {
-//   // Implementation for generating a random code (e.g., a combination of letters and numbers)
-// }
+function generateEnrollmentCode() {
+  // Implementation for generating a random code (e.g., a combination of letters and numbers)
+  // Generate a random buffer
+  const sectionLength = 3;
+  const sections = [];
 
-module.exports={createClass};
+  for (let i = 0; i < 3; i++) {
+    const buffer = crypto.randomBytes(sectionLength);
+    const section = buffer
+      .toString('base64') // Convert bytes to base64 string
+      .replace(/[^a-z]/gi, '') // Remove non-alphabetic characters
+      .slice(0, sectionLength); // Take the first 3 characters
+    sections.push(section);
+  }
+
+  return sections.join('-');
+}
+
+module.exports = { createClass };
