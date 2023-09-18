@@ -16,13 +16,13 @@ exports.createClass = async (req, res) => {
 
     // Verify that the teacherId exists in the User table
     const teacherExists = await prisma.user.findUnique({
-      where: { id: teacherId },
+      where: { email: teacherEmail },
     });
 
     if (!teacherExists) {
       return res
         .status(400)
-        .json({ error: 'Teacher with the provided ID does not exist.' });
+        .json({ error: 'Teacher with the provided email does not exist.' });
     }
 
     // Generate a unique code for enrolling
@@ -34,8 +34,10 @@ exports.createClass = async (req, res) => {
         onlineClassName,
         onlineClassGrade,
         onlineClassSection,
-        teacher: { connect: { id: teacherId } }, // Connect the class to the teacher
+        teacherName,
+        teacherEmail,
         enrollCode, // Save the enrollment code
+        meetingLink: '', // Initialize the meeting link to an empty string
       },
     });
 
