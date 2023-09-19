@@ -1,13 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-// Import necessary controllers or services
-// const onlineClass = require('./onlineClass'); // You'll create this file
-const {createClass} =require('../controllers/onlineClass');
+const {
+  createClass,
+  enrollClass,
+  getClassDetails,
+  getAllClassesCreated,
+  getAllClassesEnrolled,
+  updateMeetingLink,
+} = require('../controllers/onlineClass');
 // Define your routes
 router.post('/create', createClass);
-// router.post('/enroll', onlineClass.enrollClass);
-// router.get('/details/:classId', onlineClass.getClassDetails);
+router.post('/enroll', enrollClass);
+router.get('/details/:classId', getClassDetails);
+router.get('/details', getAllClassesCreated);
+router.get('/details', getAllClassesEnrolled);
 // router.post('/add-note/:classId', onlineClass.addNote);
 // router.post('/add-worksheet/:classId', onlineClass.addWorksheet);
 

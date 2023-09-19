@@ -86,7 +86,6 @@ model User {
   sessions      Session[]
   verificationTokens    VerificationToken[]
   teacherkycs   Teacherkyc[]
-  onlineClassesTaught OnlineClass[] 
   onlineClassesEnrolled StudentsInOnlineClass[] 
 }
 
@@ -133,9 +132,10 @@ model OnlineClass {
   onlineClassName     String   // The name of the online class
   onlineClassGrade    String   // The grade/level of the class (e.g., 10th Grade)
   onlineClassSection  String?  // Optional section within the grade
-  teacher             User     @relation(fields: [teacherId], references: [id])
-  teacherId           Int      // Foreign key to User (teacher)
+  teacherName         String      
+  teacherEmail        String   // The email of the teacher
   enrollCode          String   @unique // A unique code for students to enroll
+  meetingLink         String?   // The link to join the online class
   createdAt           DateTime @default(now())
 
   notes               Note[]
