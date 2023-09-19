@@ -1,33 +1,35 @@
-const cluster = require("cluster");
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const path = require("path");
-const totalCPUs = require("os").cpus().length;
-require("dotenv").config();
+const cluster = require('cluster');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
+const path = require('path');
+const totalCPUs = require('os').cpus().length;
+require('dotenv').config();
 
 // Server Port
 const app = express();
 const port = process.env.PORT || 8080;
 
 // api routes
-const user = require("./routes/user");
-const auth = require("./routes/auth");
-const student = require("./routes/student");
-const teacher = require("./routes/teacher");
-const test = require("./routes/test");
-const file = require("./routes/file");
-const payment = require("./routes/payment");
-const mailer = require("./routes/mailer");
-const pricing=require("./routes/pricing");
-const books=require("./routes/books");
-const questions=require('./routes/questions');
-const profile=require('./routes/profile');
+const user = require('./routes/user');
+const auth = require('./routes/auth');
+const student = require('./routes/student');
+const teacher = require('./routes/teacher');
+const test = require('./routes/test');
+const file = require('./routes/file');
+const payment = require('./routes/payment');
+const mailer = require('./routes/mailer');
+const pricing = require('./routes/pricing');
+const books = require('./routes/books');
+const questions = require('./routes/questions');
+const profile = require('./routes/profile');
+const onlineClass = require('./routes/onlineClass');
+// middelewere
 
 // middelewere
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 
 // Cors
@@ -52,7 +54,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "*",
+    origin: '*',
   })
 );
 
@@ -62,7 +64,7 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on("exit", (worker, code, signal) => {
+  cluster.on('exit', (worker, code, signal) => {
     cluster.fork();
   });
 } else {
@@ -71,18 +73,19 @@ if (cluster.isMaster) {
     return next();
   });
 
-  app.use("/api/auth", auth);
-  app.use("/api/user", user);
-  app.use("/api/student", student);
-  app.use("/api/teacher", teacher);
-  app.use("/api/test", test);
-  app.use("/api/file", file);
-  app.use("/api/payment", payment);
-  app.use("/api/mailer", mailer);
-  app.use("/api/pricing", pricing);
-  app.use('/api/books',books);
-  app.use("/api/questions",questions);
-  app.use("/api/profile",profile);
+  app.use('/api/auth', auth);
+  app.use('/api/user', user);
+  app.use('/api/student', student);
+  app.use('/api/teacher', teacher);
+  app.use('/api/test', test);
+  app.use('/api/file', file);
+  app.use('/api/payment', payment);
+  app.use('/api/mailer', mailer);
+  app.use('/api/pricing', pricing);
+  app.use('/api/books', books);
+  app.use('/api/questions', questions);
+  app.use('/api/profile', profile);
+  app.use('/api/onlineClass', onlineClass);
   app.listen(port, () => {
     console.log(`Server is running on port : ${port}`);
   });
