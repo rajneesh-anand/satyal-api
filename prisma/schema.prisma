@@ -86,7 +86,7 @@ model User {
   sessions      Session[]
   verificationTokens    VerificationToken[]
   teacherkycs   Teacherkyc[]
-  onlineClassesEnrolled StudentsInOnlineClass[] 
+  // onlineClassesEnrolled StudentsInOnlineClass[] 
 }
 
 model VerificationToken {
@@ -136,20 +136,20 @@ model OnlineClass {
   teacherEmail        String   // The email of the teacher
   enrollCode          String   @unique // A unique code for students to enroll
   meetingLink         String?   // The link to join the online class
+  studentEmails       String[] @default([]) // Many-to-many relation with User
   createdAt           DateTime @default(now())
 
   notes               Note[]
   worksheets          Worksheet[]
-  students            StudentsInOnlineClass[] // Many-to-many relation with User
 }
 
-model StudentsInOnlineClass {
-  id         Int    @default(autoincrement()) @id
-  user       User   @relation(fields: [userId], references: [id])
-  userId     Int    // Foreign key to User (student)
-  onlineClassId Int  // Foreign key to OnlineClass
-  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
-}
+// model StudentsInOnlineClass {
+//   id         Int    @default(autoincrement()) @id
+//   user       User   @relation(fields: [userId], references: [id])
+//   userId     Int    // Foreign key to User (student)
+//   onlineClassId Int  // Foreign key to OnlineClass
+//   onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
+// }
 
 model Note {
   id         Int      @default(autoincrement()) @id
