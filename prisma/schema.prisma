@@ -136,20 +136,21 @@ model OnlineClass {
   teacherEmail        String   // The email of the teacher
   enrollCode          String   @unique // A unique code for students to enroll
   meetingLink         String?   // The link to join the online class
-  studentEmails       String[] @default([]) // Many-to-many relation with User
   createdAt           DateTime @default(now())
 
+  studentDetails      StudentsInOnlineClass[] // Many-to-many relation with User
   notes               Note[]
   worksheets          Worksheet[]
 }
 
-// model StudentsInOnlineClass {
-//   id         Int    @default(autoincrement()) @id
-//   user       User   @relation(fields: [userId], references: [id])
-//   userId     Int    // Foreign key to User (student)
-//   onlineClassId Int  // Foreign key to OnlineClass
-//   onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
-// }
+model StudentsInOnlineClass {
+  id            Int    @default(autoincrement()) @id
+  studentEmail  String @unique
+  firstName     String
+  lastName      String
+  onlineClassId Int  // Foreign key to OnlineClass
+  onlineClass   OnlineClass @relation(fields: [onlineClassId], references: [id])
+}
 
 model Note {
   id         Int      @default(autoincrement()) @id

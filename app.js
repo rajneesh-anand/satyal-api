@@ -23,7 +23,8 @@ const pricing = require('./routes/pricing');
 const books = require('./routes/books');
 const questions = require('./routes/questions');
 const profile = require('./routes/profile');
-const onlineClass = require('./routes/onlineClass');
+const onlineClassTeacher = require('./routes/onlineClassTeacher');
+const onlineClassStudent = require('./routes/onlineClassStudent');
 // middelewere
 
 app.use(express.json());
@@ -84,7 +85,8 @@ if (cluster.isMaster) {
   app.use('/api/books', books);
   app.use('/api/questions', questions);
   app.use('/api/profile', profile);
-  app.use('/api/onlineClass', onlineClass);
+  app.use('/api/onlineClassTeacher', onlineClassTeacher);
+  app.use('/api/onlineClassStudent', onlineClassStudent);
   app.listen(port, () => {
     console.log(`Server is running on port : ${port}`);
   });

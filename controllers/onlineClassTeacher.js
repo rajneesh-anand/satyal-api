@@ -48,35 +48,33 @@ exports.createClass = async (req, res) => {
   }
 };
 
-// Enroll a student in an online class
-// exports.enrollClass = async (req, res) => {
-//   try {
-//     // Extract data from the request body
-//     const { enrollCode, studentId } = req.body;
+// ############### - REMAINING - ########################################
+// Delete the online class - teacher side
+// Remove a student from an online class - teacher side
+// Leave the online class - student side
+// #####################################################################
 
-//     // Find the class with the given enrollment code
-//     const onlineClass = await prisma.onlineClass.findUnique({
-//       where: { enrollCode },
-//     });
+// Get all online classes based on the studentEmail
+exports.getAllEnrolledStudentsInAClass = async (req, res) => {
+  try {
+    // Extract the studentEmail from the request parameters
+    const studentEmail = req.params.studentEmail;
 
-//     if (!onlineClass) {
-//       return res.status(404).json({ error: 'Class not found' });
-//     }
+    // Fetch all online classes for the student
+    const onlineClasses = await prisma.onlineClass.findMany({
+      where: { students: { some: { email: studentEmail } } },
+      include: {
+        notes: true,
+        worksheets: true,
+      },
+    });
 
-//     // Connect the student to the class
-//     await prisma.onlineClass.update({
-//       where: { enrollCode },
-//       data: {
-//         students: { connect: { id: studentId } },
-//       },
-//     });
-
-//     res.status(200).json({ message: 'Enrolled in class successfully' });
-//   } catch (error) {
-//     console.error('Error enrolling in class:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
+    res.status(200).json(onlineClasses);
+  } catch (error) {
+    console.error('Error fetching student classes:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 // Get all online classes based on the teacherEmail
 exports.getAllCreatedClasses = async (req, res) => {
@@ -101,28 +99,6 @@ exports.getAllCreatedClasses = async (req, res) => {
   }
 };
 
-// Get all online classes based on the studentEmail
-exports.getAllEnrolledClasses = async (req, res) => {
-  try {
-    // Extract the studentEmail from the request parameters
-    const studentEmail = req.params.studentEmail;
-
-    // Fetch all online classes for the student
-    const onlineClasses = await prisma.onlineClass.findMany({
-      where: { students: { some: { email: studentEmail } } },
-      include: {
-        notes: true,
-        worksheets: true,
-      },
-    });
-
-    res.status(200).json(onlineClasses);
-  } catch (error) {
-    console.error('Error fetching student classes:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
 // Get details of a particular online class
 exports.getClassDetails = async (req, res) => {
   try {
@@ -133,8 +109,6 @@ exports.getClassDetails = async (req, res) => {
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { id: classId },
       include: {
-        teacher: true,
-        students: true,
         notes: true,
         worksheets: true,
       },
@@ -151,7 +125,7 @@ exports.getClassDetails = async (req, res) => {
   }
 };
 
-// Change meeting joining code for a class
+// Update meeting joining link(google meet link) for a class
 exports.updateMeetingLink = async (req, res) => {
   try {
     // Extract data from the request body
@@ -183,8 +157,32 @@ exports.updateMeetingLink = async (req, res) => {
 // exports.addNote = async (req, res) => {
 //   // Implementation for adding notes to the class
 // };
+// Get all notes for an online class
+// exports.addNote = async (req, res) => {
+//   // Implementation for adding notes to the class
+// };
+// Update notes of online class
+// exports.addNote = async (req, res) => {
+//   // Implementation for adding notes to the class
+// };
+// Delete notes online class
+// exports.addNote = async (req, res) => {
+//   // Implementation for adding notes to the class
+// };
 
 // Add a worksheet to an online class
+// exports.addWorksheet = async (req, res) => {
+//   // Implementation for adding worksheets to the class
+// };
+// Get all worksheets of an online class
+// exports.addWorksheet = async (req, res) => {
+//   // Implementation for adding worksheets to the class
+// };
+// Update a worksheet of an online class
+// exports.addWorksheet = async (req, res) => {
+//   // Implementation for adding worksheets to the class
+// };
+// Delete a worksheet of an online class
 // exports.addWorksheet = async (req, res) => {
 //   // Implementation for adding worksheets to the class
 // };
