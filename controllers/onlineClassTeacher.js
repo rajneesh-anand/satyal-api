@@ -99,7 +99,7 @@ exports.getAllCreatedClasses = async (req, res) => {
   }
 };
 
-// Get details of a particular online class
+// Get details of a particular online class(for teachers)
 exports.getClassDetails = async (req, res) => {
   try {
     // Extract the classId from the request parameters
@@ -109,6 +109,7 @@ exports.getClassDetails = async (req, res) => {
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { id: classId },
       include: {
+        studentDetails: true,
         notes: true,
         worksheets: true,
       },
@@ -149,6 +150,52 @@ exports.updateMeetingLink = async (req, res) => {
       .json({ message: 'Meeting link updated successfully', updatedOnlineClass });
   } catch (error) {
     console.error('Error updating meeting link:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Delete an entire online class
+exports.deleteClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    // Check if the online class exists
+    const onlineClass = await prisma.onlineClass.findUnique({
+      where: { id: parseInt(classId) },
+      include: {
+        studentDetails: true, // Include students associated with the class
+        notes: true, // Include notes associated with the class
+        worksheets: true, // Include worksheets associated with the class
+      },
+    });
+
+    if (!onlineClass) {
+      return res.status(404).json({ error: 'Online class not found' });
+    }
+
+    // Delete all associated students
+    await prisma.studentsInOnlineClass.deleteMany({
+      where: { onlineClassId: parseInt(classId) },
+    });
+
+    // Delete all associated notes
+    await prisma.note.deleteMany({
+      where: { onlineClassId: parseInt(classId) },
+    });
+
+    // Delete all associated worksheets
+    await prisma.worksheet.deleteMany({
+      where: { onlineClassId: parseInt(classId) },
+    });
+
+    // Delete the online class itself
+    await prisma.onlineClass.delete({
+      where: { id: parseInt(classId) },
+    });
+
+    res.status(204).send(); // Successfully deleted, no content to send
+  } catch (error) {
+    console.error('Error deleting online class:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
