@@ -13,7 +13,7 @@ exports.createClass = async (req, res) => {
       teacherEmail,
       teacherName,
     } = req.body;
-
+   
     // Verify that the teacherId exists in the User table
     const teacherExists = await prisma.user.findUnique({
       where: { email: teacherEmail },
@@ -54,7 +54,7 @@ exports.getAllClassesCreated = async (req, res) => {
     // Extract the teacherEmail from the request parameters
 
     const teacherEmail = req.params.teacherEmail;
-
+  
     // Fetch all online classes for the teacher
     const onlineClasses = await prisma.onlineClass.findMany({
       where: { teacher: { email: teacherEmail } },
