@@ -15,11 +15,11 @@ exports.createClass = async (req, res) => {
     } = req.body;
 
     // Verify that the teacherId exists in the User table
-    const teacherExists = await prisma.user.findUnique({
+    const teacher = await prisma.user.findUnique({
       where: { email: teacherEmail },
     });
 
-    if (!teacherExists) {
+    if (!teacher || teacher.userType !== 'teacher') {
       return res
         .status(400)
         .json({ error: 'Teacher with the provided email does not exist.' });
