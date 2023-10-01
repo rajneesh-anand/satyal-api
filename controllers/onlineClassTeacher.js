@@ -14,12 +14,14 @@ exports.createClass = async (req, res) => {
       teacherName,
     } = req.body;
 
+    console.log('teacherEmail', teacherEmail);
+
     // Verify that the teacherId exists in the User table
     const teacher = await prisma.user.findUnique({
       where: { email: teacherEmail },
     });
 
-    if (!teacher || teacher.userType !== 'teacher') {
+    if (!teacher || teacher.userType !== 'Teacher') {
       return res
         .status(400)
         .json({ error: 'Teacher with the provided email does not exist.' });
@@ -49,7 +51,6 @@ exports.createClass = async (req, res) => {
 };
 
 // ############### - REMAINING - ########################################
-// Delete the online class - teacher side
 // Remove a student from an online class - teacher side
 // Leave the online class - student side
 // #####################################################################
