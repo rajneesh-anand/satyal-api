@@ -14,12 +14,14 @@ exports.createClass = async (req, res) => {
       teacherName,
     } = req.body;
 
+    console.log('teacherEmail', teacherEmail);
+
     // Verify that the teacherId exists in the User table
     const teacher = await prisma.user.findUnique({
       where: { email: teacherEmail },
     });
 
-    if (!teacher || teacher.userType !== 'teacher') {
+    if (!teacher || teacher.userType !== 'Teacher') {
       return res
         .status(400)
         .json({ error: 'Teacher with the provided email does not exist.' });
@@ -49,7 +51,6 @@ exports.createClass = async (req, res) => {
 };
 
 // ############### - REMAINING - ########################################
-// Delete the online class - teacher side
 // Remove a student from an online class - teacher side
 // Leave the online class - student side
 // #####################################################################
@@ -130,13 +131,29 @@ exports.getClassDetails = async (req, res) => {
 exports.updateMeetingLink = async (req, res) => {
   try {
     // Extract data from the request body
-    const { onlineClassId, meetingLink } = req.body;
+    const { onlineClassId, meetingLink, teacherEmail } = req.body;
 
     // Validate data (ensure onlineClassId exists)
     if (!onlineClassId || !meetingLink) {
       return res
         .status(400)
         .json({ error: 'Both onlineClassId and meetingLink are required' });
+    }
+
+    // Check if the teacherEmail belongs to this online class
+    const onlineClass = await prisma.onlineClass.findUnique({
+      where: { id: onlineClassId },
+    });
+
+    if (!onlineClass) {
+      return res.status(404).json({ error: 'Online class not found' });
+    }
+
+    // Check if the teacherEmail in the online class matches the provided teacherEmail
+    if (onlineClass.teacherEmail !== teacherEmail) {
+      return res
+        .status(403)
+        .json({ error: 'You are not authorized to update this class' });
     }
 
     // Update the meetingLink in the database
