@@ -4,6 +4,7 @@ const crypto = require('crypto');
 
 // Create a new online class
 exports.createClass = async (req, res) => {
+  console.log('api end point is hitted');
   try {
     // Extract data from the request body
     const {
