@@ -20,7 +20,7 @@ exports.createClass = async (req, res) => {
       where: { email: teacherEmail },
     });
 
-    if (!teacher || teacher.userType !== 'teacher') {
+    if (!teacher || teacher.userType !== 'Teacher') {
       return res
         .status(400)
         .json({ error: 'Teacher with the provided email does not exist.' });
@@ -132,7 +132,7 @@ exports.updateMeetingLink = async (req, res) => {
   try {
     // Extract data from the request body
     const { onlineClassId, meetingLink } = req.body;
-
+   
     // Validate data (ensure onlineClassId exists)
     if (!onlineClassId || !meetingLink) {
       return res
