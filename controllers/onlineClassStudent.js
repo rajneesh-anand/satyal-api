@@ -16,6 +16,18 @@ exports.enrollClass = async (req, res) => {
       return res.status(404).json({ error: 'Online class not found' });
     }
 
+    // Check if the student is already enrolled in the class
+    const isEnrolled = await prisma.StudentsInOnlineClass.findFirst({
+      where: {
+        onlineClassId: onlineClass.id,
+        studentEmail,
+      },
+    });
+
+    if (isEnrolled) {
+      return res.status(400).json({ error: 'You have already joined this online class' });
+    }
+
     // Fetch the student's name based on their email from the User model
     const studentUser = await prisma.user.findUnique({
       where: { email: studentEmail },
@@ -23,7 +35,7 @@ exports.enrollClass = async (req, res) => {
     });
 
     if (!studentUser) {
-      return res.status(404).json({ error: 'Student not found' });
+      return res.status(404).json({ error: 'No student with this email is found' });
     }
 
     // Create a new StudentInOnlineClass model and associate it with the online class
@@ -44,36 +56,6 @@ exports.enrollClass = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
-// Enroll in online class alternative
-// exports.enrollClass = async (req, res) => {
-//   try {
-//     // Extract data from the request body
-//     const { enrollCode, studentId } = req.body;
-
-//     // Find the class with the given enrollment code
-//     const onlineClass = await prisma.onlineClass.findUnique({
-//       where: { enrollCode },
-//     });
-
-//     if (!onlineClass) {
-//       return res.status(404).json({ error: 'Class not found' });
-//     }
-
-//     // Connect the student to the class
-//     await prisma.onlineClass.update({
-//       where: { enrollCode },
-//       data: {
-//         students: { connect: { id: studentId } },
-//       },
-//     });
-
-//     res.status(200).json({ message: 'Enrolled in class successfully' });
-//   } catch (error) {
-//     console.error('Error enrolling in class:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
 
 // Get all online classes based on the studentEmail
 exports.getAllEnrolledClasses = async (req, res) => {
@@ -120,6 +102,73 @@ exports.getClassDetails = async (req, res) => {
     res.status(200).json(onlineClass);
   } catch (error) {
     console.error('Error fetching class details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Student leaves an online class
+exports.leaveOnlineClass = async (req, res) => {
+  try {
+    const { onlineClassId, studentEmail } = req.body;
+
+    // Validate data
+    if (!onlineClassId) {
+      return res.status(400).json({ error: 'onlineClassId is required' });
+    }
+
+    // Find the online class by its ID
+    const onlineClass = await prisma.onlineClass.findUnique({
+      where: { id: onlineClassId },
+    });
+
+    if (!onlineClass) {
+      return res.status(404).json({ error: 'Online class not found' });
+    }
+
+    // Check if the authenticated user is a student in the online class
+    const isEnrolled = await prisma.studentsInOnlineClass.findFirst({
+      where: {
+        onlineClassId,
+        studentEmail: studentEmail,
+      },
+    });
+
+    if (!isEnrolled) {
+      return res.status(403).json({ error: 'You are not enrolled in this class' });
+    }
+
+    // Remove the student from the online class
+    await prisma.studentsInOnlineClass.deleteMany({
+      where: {
+        onlineClassId,
+        studentEmail: studentEmail,
+      },
+    });
+
+    // Check if the online class has studentDetails and perform the update
+    if (onlineClass.studentDetails) {
+      const updatedStudentDetails = onlineClass.studentDetails.filter(
+        (student) => student.studentEmail !== studentEmail
+      );
+
+      // Update the online class with the filtered studentDetails
+      await prisma.onlineClass.update({
+        where: {
+          id: onlineClassId,
+        },
+        data: {
+          studentDetails: {
+            set: updatedStudentDetails,
+          },
+        },
+      });
+    }
+
+    return res.status(200).json({
+      message: 'You have left the online class.',
+    });
+  } catch (error) {
+    console.error('Error leaving online class:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

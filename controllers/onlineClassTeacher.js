@@ -218,6 +218,77 @@ exports.deleteClass = async (req, res) => {
   }
 };
 
+// Teacher removes a student from an online class (teacher side)
+exports.removeStudentFromOnlineClass = async (req, res) => {
+  try {
+    const { onlineClassId, studentEmail, teacherEmail } = req.body;
+
+    // Validate data
+    if (!onlineClassId || !studentEmail) {
+      return res
+        .status(400)
+        .json({ error: 'onlineClassId and studentEmail are required' });
+    }
+
+    // Find the online class by its ID
+    const onlineClass = await prisma.onlineClass.findUnique({
+      where: { id: onlineClassId },
+    });
+
+    if (!onlineClass) {
+      return res.status(404).json({ error: 'Online class not found' });
+    }
+
+    // Check if the authenticated user is the teacher of the online class
+    if (onlineClass.teacherEmail !== teacherEmail) {
+      return res
+        .status(403)
+        .json({ error: 'You are not authorized to remove a student from this class' });
+    }
+
+    // Remove the student from the online class's associated StudentsInOnlineClass table
+    await prisma.studentsInOnlineClass.deleteMany({
+      where: {
+        onlineClassId,
+        studentEmail,
+      },
+    });
+
+    // Check if the online class has studentDetails and perform the update
+    if (onlineClass.studentDetails) {
+      const updatedStudentDetails = onlineClass.studentDetails.filter(
+        (student) => student.studentEmail !== studentEmail
+      );
+
+      // Update the online class with the filtered studentDetails
+      await prisma.onlineClass.update({
+        where: {
+          id: onlineClassId,
+        },
+        data: {
+          studentDetails: {
+            set: updatedStudentDetails,
+          },
+        },
+      });
+    }
+
+    // Get the updated list of students still enrolled in the online class
+    const remainingStudents = await prisma.studentsInOnlineClass.findMany({
+      where: {
+        onlineClassId,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: 'Student removed from the online class', remainingStudents });
+  } catch (error) {
+    console.error('Error removing student from online class:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 // Add a note to an online class
 // exports.addNote = async (req, res) => {
 //   // Implementation for adding notes to the class
