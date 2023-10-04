@@ -8,6 +8,7 @@ const {
   getAllEnrolledStudentsInAClass,
   updateMeetingLink,
   deleteClass,
+  removeStudentFromOnlineClass,
 } = require('../controllers/onlineClassTeacher');
 // Define your routes
 router.post('/create', createClass);
@@ -15,6 +16,7 @@ router.get('/details/:classId', getClassDetails);
 router.get('/createdClasses/:email', getAllCreatedClasses);
 router.get('/enrolledClasses/:email', getAllEnrolledStudentsInAClass);
 router.patch('/updateLink', updateMeetingLink);
+router.patch('/remove', removeStudentFromOnlineClass);
 router.delete('/deleteClass/:classId', deleteClass);
 // router.post('/add-note/:classId', onlineClass.addNote);
 // router.post('/add-worksheet/:classId', onlineClass.addWorksheet);

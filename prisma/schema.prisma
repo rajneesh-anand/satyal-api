@@ -148,15 +148,15 @@ model StudentsInOnlineClass {
   studentEmail  String @unique
   firstName     String
   lastName      String
-  onlineClassId Int  // Foreign key to OnlineClass
-  onlineClass   OnlineClass @relation(fields: [onlineClassId], references: [id])
+  onlineClassId Int?  // Foreign key to OnlineClass
+  onlineClass   OnlineClass? @relation(fields: [onlineClassId], references: [id])
 }
 
 model Note {
   id         Int      @default(autoincrement()) @id
   content    String   // The content of the note
-  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
-  onlineClassId Int    // Foreign key to OnlineClass
+  onlineClassId Int?    // Foreign key to OnlineClass
+  onlineClass OnlineClass? @relation(fields: [onlineClassId], references: [id])
   createdAt  DateTime @default(now())
 }
 
@@ -164,8 +164,8 @@ model Worksheet {
   id         Int      @default(autoincrement()) @id
   title      String   // The title of the worksheet
   content    String   // The content of the worksheet
-  onlineClass OnlineClass @relation(fields: [onlineClassId], references: [id])
-  onlineClassId Int    // Foreign key to OnlineClass
+  onlineClassId Int?    // Foreign key to OnlineClass
+  onlineClass OnlineClass? @relation(fields: [onlineClassId], references: [id])
   createdAt  DateTime @default(now())
 }
 
