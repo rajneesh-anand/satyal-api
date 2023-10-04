@@ -25,6 +25,7 @@ const questions = require('./routes/questions');
 const profile = require('./routes/profile');
 const onlineClassTeacher = require('./routes/onlineClassTeacher');
 const onlineClassStudent = require('./routes/onlineClassStudent');
+const note=require('./routes/note');
 // middelewere
 
 // middelewere
@@ -88,6 +89,7 @@ if (cluster.isMaster) {
   app.use('/api/profile', profile);
   app.use('/api/onlineClassTeacher', onlineClassTeacher);
   app.use('/api/onlineClassStudent', onlineClassStudent);
+  app.use('/api/note',note);
   app.listen(port, () => {
     console.log(`Server is running on port : ${port}`);
   });
