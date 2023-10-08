@@ -7,6 +7,8 @@ exports.enrollClass = async (req, res) => {
     // Extract the enrollment code and student email from the request body
     const { enrollCode, studentEmail } = req.body;
 
+    console.log(req.body);
+
     // Find the online class with the given enrollment code
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { enrollCode },
@@ -16,6 +18,8 @@ exports.enrollClass = async (req, res) => {
       return res.status(404).json({ error: 'Online class not found' });
     }
 
+    console.log('This is the student mail:', studentEmail);
+
     // Check if the student is already enrolled in the class
     const isEnrolled = await prisma.StudentsInOnlineClass.findFirst({
       where: {
@@ -23,6 +27,8 @@ exports.enrollClass = async (req, res) => {
         studentEmail,
       },
     });
+
+    console.log('This is the isEnrolled:', isEnrolled);
 
     if (isEnrolled) {
       return res.status(400).json({ error: 'You have already joined this online class' });
@@ -34,9 +40,13 @@ exports.enrollClass = async (req, res) => {
       select: { firstName: true, middleName: true, lastName: true },
     });
 
+    console.log('This is the student user:', studentUser);
+
     if (!studentUser) {
       return res.status(404).json({ error: 'No student with this email is found' });
     }
+
+    console.log('This is the enroll code:', enrollCode);
 
     // Create a new StudentInOnlineClass model and associate it with the online class
     const newStudentInClass = await prisma.StudentsInOnlineClass.create({
@@ -48,12 +58,14 @@ exports.enrollClass = async (req, res) => {
       },
     });
 
+    console.log('This is the new student in class:', newStudentInClass);
+
     res
       .status(200)
       .json({ message: 'Enrolled in class successfully', student: newStudentInClass });
   } catch (error) {
     console.error('Error enrolling in class:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error', data: error });
   }
 };
 
