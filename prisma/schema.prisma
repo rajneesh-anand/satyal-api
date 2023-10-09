@@ -145,7 +145,7 @@ model OnlineClass {
 
 model StudentsInOnlineClass {
   id            Int    @default(autoincrement()) @id
-  studentEmail  String @unique
+  studentEmail  String 
   firstName     String
   lastName      String
   onlineClassId Int?  // Foreign key to OnlineClass
