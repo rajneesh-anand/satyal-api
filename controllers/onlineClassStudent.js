@@ -6,7 +6,8 @@ exports.enrollClass = async (req, res) => {
   try {
     // Extract the enrollment code and student email from the request body
     const { enrollCode, studentEmail } = req.body;
-
+    console.log(enrollCode);
+    console.log(studentEmail);
     // Find the online class with the given enrollment code
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { enrollCode },
