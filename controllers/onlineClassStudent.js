@@ -91,6 +91,7 @@ exports.getClassDetails = async (req, res) => {
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { id: classId },
       include: {
+        studentDetails: true,
         notes: true,
         worksheets: true,
       },
