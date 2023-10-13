@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // Enroll a student in an online class
@@ -6,15 +6,14 @@ exports.enrollClass = async (req, res) => {
   try {
     // Extract the enrollment code and student email from the request body
     const { enrollCode, studentEmail } = req.body;
-    console.log(enrollCode);
-    console.log(studentEmail);
+
     // Find the online class with the given enrollment code
     const onlineClass = await prisma.onlineClass.findUnique({
       where: { enrollCode },
     });
 
     if (!onlineClass) {
-      return res.status(404).json({ error: "Online class not found" });
+      return res.status(404).json({ error: 'Online class not found' });
     }
 
     // Check if the student is already enrolled in the class
@@ -26,21 +25,32 @@ exports.enrollClass = async (req, res) => {
     });
 
     if (isEnrolled) {
-      return res
-        .status(400)
-        .json({ error: "You have already joined this online class" });
+      return res.status(400).json({ error: 'You have already joined this online class' });
     }
 
-    // Fetch the student's name based on their email from the User model
+    // student ley same class ie afule sign up garda jun class ko student vaneko cha tei class
+    // ko lagi banaiyeko online class ma matra join garna milne banauna paryo..
+    // so you need to get the user details as per the email, then check if the user is
+    // of the same class as the online class, then enroll the student in the online class
+
+    // Fetch the student's name and grade based on their email from the User model
     const studentUser = await prisma.user.findUnique({
       where: { email: studentEmail },
-      select: { firstName: true, middleName: true, lastName: true },
+      select: { firstName: true, middleName: true, lastName: true, studentClass: true },
     });
 
     if (!studentUser) {
+      return res.status(404).json({ error: 'No student with this email is found' });
+    }
+
+    const studentGradeValue = JSON.parse(studentUser.studentClass).value;
+    console.log(studentGradeValue);
+
+    // Check if the student's grade matches the online class grade
+    if (studentGradeValue !== onlineClass.onlineClassGrade) {
       return res
-        .status(404)
-        .json({ error: "No student with this email is found" });
+        .status(400)
+        .json({ error: 'Your grade does not match the online class grade' });
     }
 
     // Create a new StudentInOnlineClass model and associate it with the online class
@@ -54,12 +64,12 @@ exports.enrollClass = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Enrolled in class successfully",
+      message: 'Enrolled in class successfully',
       student: newStudentInClass,
     });
   } catch (error) {
-    console.error("Error enrolling in class:", error);
-    res.status(500).json({ error: "Internal Server Error", data: error });
+    console.error('Error enrolling in class:', error);
+    res.status(500).json({ error: 'Internal Server Error', data: error });
   }
 };
 
@@ -81,8 +91,8 @@ exports.getAllEnrolledClasses = async (req, res) => {
 
     res.status(200).json(onlineClasses);
   } catch (error) {
-    console.error("Error fetching student classes:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error fetching student classes:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -103,13 +113,13 @@ exports.getClassDetails = async (req, res) => {
     });
 
     if (!onlineClass) {
-      return res.status(404).json({ error: "Class not found" });
+      return res.status(404).json({ error: 'Class not found' });
     }
 
     res.status(200).json(onlineClass);
   } catch (error) {
-    console.error("Error fetching class details:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error fetching class details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -120,7 +130,7 @@ exports.leaveOnlineClass = async (req, res) => {
 
     // Validate data
     if (!onlineClassId) {
-      return res.status(400).json({ error: "onlineClassId is required" });
+      return res.status(400).json({ error: 'onlineClassId is required' });
     }
 
     // Find the online class by its ID
@@ -129,7 +139,7 @@ exports.leaveOnlineClass = async (req, res) => {
     });
 
     if (!onlineClass) {
-      return res.status(404).json({ error: "Online class not found" });
+      return res.status(404).json({ error: 'Online class not found' });
     }
 
     // Check if the authenticated user is a student in the online class
@@ -141,9 +151,7 @@ exports.leaveOnlineClass = async (req, res) => {
     });
 
     if (!isEnrolled) {
-      return res
-        .status(403)
-        .json({ error: "You are not enrolled in this class" });
+      return res.status(403).json({ error: 'You are not enrolled in this class' });
     }
 
     // Remove the student from the online class
@@ -174,10 +182,10 @@ exports.leaveOnlineClass = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "You have left the online class.",
+      message: 'You have left the online class.',
     });
   } catch (error) {
-    console.error("Error leaving online class:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error leaving online class:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
