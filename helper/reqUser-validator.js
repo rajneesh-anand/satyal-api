@@ -1,4 +1,4 @@
-const prisma = require("../lib/prisma");
+const prisma = require('../lib/prisma');
 
 // this function check if the email id register or not in our system
 async function emailValidatorInSystem(email) {
@@ -8,6 +8,7 @@ async function emailValidatorInSystem(email) {
         email: email,
       },
     });
+    console.log('Email exits or not?: ', emailExist);
     return emailExist;
   } catch (err) {
     console.log(err);
