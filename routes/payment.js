@@ -41,6 +41,7 @@ router.get("/status", (req, res) => {
   });
 });
 
+// working code with real money test
 // router.post('/khalti', async (req, res) => {
 //   const { userData, payment, selectedPlan, userType } = req.body;
 //   console.log("This is user's data:", userData);
