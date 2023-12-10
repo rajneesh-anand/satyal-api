@@ -1,6 +1,5 @@
 const axios = require("axios");
 
-// khalti payment helper funtion
 async function khaltiPayment(userData, selectedPlan) {
   const { plan_id, plan_fee, plan_name, with_out_vat } = selectedPlan;
   const {
