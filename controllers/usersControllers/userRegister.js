@@ -2,6 +2,7 @@ const { hashSync, genSaltSync } = require("bcrypt");
 const { emailValidatorInSystem } = require("../../helper/reqUser-validator");
 const { registerStudent } = require("../../helper/user");
 const { khaltiPayment } = require("../../helper/payment");
+
 // user register controller
 // currently it only work on student register
 async function userRegisterController(req, res) {
