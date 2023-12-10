@@ -1,16 +1,10 @@
-const axios = require("axios");
+const axios = require('axios');
 
 // khalti payment helper funtion
 async function khaltiPayment(userData, selectedPlan) {
   const { plan_id, plan_fee, plan_name, with_out_vat } = selectedPlan;
-  const {
-    firstName,
-    middleName,
-    lastName,
-    email,
-    parentName,
-    parentContactNumber,
-  } = userData;
+  const { firstName, middleName, lastName, email, parentName, parentContactNumber } =
+    userData;
 
   const planVat = (Number(with_out_vat) * 13) / 100;
   const total_fee = Number(plan_fee * 100);
@@ -19,43 +13,43 @@ async function khaltiPayment(userData, selectedPlan) {
   // console.log(typeof plan_fee);
   try {
     const { data } = await axios.post(
-      "https://a.khalti.com/api/v2/epayment/initiate/",
+      'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
-        return_url: "http://localhost:3000/payment/status",
-        website_url: "http://localhost:3000",
-        amount: total_fee,
-        purchase_order_id: plan_id,
-        purchase_order_name: plan_name,
+        return_url: 'http://localhost:3000/payment/status',
+        website_url: 'http://localhost:3000',
+        amount: 1300,
+        purchase_order_id: 'test12',
+        purchase_order_name: 'test',
         customer_info: {
-          name: `${firstName} ${middleName ? middleName : " "} ${lastName}`,
-          email: email,
-          phone: parentContactNumber,
+          name: 'Ashim Upadhaya',
+          email: 'example@gmail.com',
+          phone: '9811496763',
         },
         amount_breakdown: [
           {
-            label: "Mark Price",
-            amount: mark_price,
+            label: 'Mark Price',
+            amount: 1000,
           },
           {
-            label: "VAT",
-            amount: planVat * 100,
+            label: 'VAT',
+            amount: 300,
           },
         ],
         product_details: [
           {
             identity: plan_id,
             name: plan_name,
-            total_price: total_fee,
+            total_price: 1300,
             quantity: 1,
-            unit_price: total_fee,
+            unit_price: 1300,
           },
         ],
       }),
       {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Key e6f37d35bec24963b691f76c8d75315e",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Key e6f37d35bec24963b691f76c8d75315e',
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
           // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452
