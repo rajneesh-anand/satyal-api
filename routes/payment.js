@@ -500,9 +500,9 @@ router.post("/khalti", async (req, res) => {
 // Create a new file, e.g., paymentService.js:
 
 // paymentService.js
-const axios = require("axios");
-const { genSaltSync, hashSync } = require("bcrypt");
-const { prisma } = require("./path-to-your-prisma-instance");
+// const axios = require("axios");
+// const { genSaltSync, hashSync } = require("bcrypt");
+// const { prisma } = require("./path-to-your-prisma-instance");
 
 async function initiatePayment(userData) {
   try {
@@ -552,8 +552,8 @@ async function createUser(userData, userType) {
 // In your route handler file:
 
 // Your route handler file
-const express = require("express");
-const { initiatePayment, createUser } = require("./path-to-paymentService");
+// const express = require("express");
+// const { initiatePayment, createUser } = require("./path-to-paymentService");
 
 // const router = express.Router();
 
