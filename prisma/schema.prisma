@@ -87,6 +87,8 @@ model User {
   verificationTokens    VerificationToken[]
   teacherkycs   Teacherkyc[]
   // onlineClassesEnrolled StudentsInOnlineClass[] 
+  purchases Purchase[] // This is a many-to-many relationship
+  activeSubscription Boolean @default(false)
 }
 
 model VerificationToken {
@@ -168,5 +170,24 @@ model Worksheet {
   onlineClass OnlineClass? @relation(fields: [onlineClassId], references: [id])
   createdAt  DateTime @default(now())
 }
+
+model Purchase {
+  id        Int        @id @default(autoincrement())
+  userId    Int
+  name      String
+  user      User      @relation(fields: [userId], references: [id])
+  transactionId String   @unique
+  amount    Decimal
+  mobile   String
+  purchaseOrderId String
+  purchaseOrderName String
+  paymentMethod String
+  paymentStatus String
+  // subscriptionStartDate DateTime @default(now())
+  // subscriptionEndDate   DateTime @default(now())
+  subscriptionStartDate String
+  subscriptionEndDate   String
+}
+
 
  

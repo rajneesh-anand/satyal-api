@@ -101,7 +101,7 @@ async function khaltiPayment(userData, selectedPlan) {
     const { data } = await axios.post(
       `${process.env.KHALTI_PAYMENT_TEST_URL}`,
       JSON.stringify({
-        return_url: 'http://localhost:3000/payment/status',
+        return_url: `http://localhost:3000/payment/status?email=${email}`,
         website_url: 'http://localhost:3000',
         amount: 1300,
         purchase_order_id: plan_id,
@@ -119,8 +119,6 @@ async function khaltiPayment(userData, selectedPlan) {
           {
             label: 'VAT',
             amount: 300,
-            label: 'VAT',
-            amount: 300,
           },
         ],
         product_details: [
@@ -128,9 +126,7 @@ async function khaltiPayment(userData, selectedPlan) {
             identity: plan_id,
             name: plan_name,
             total_price: 1300,
-            total_price: 1300,
             quantity: 1,
-            unit_price: 1300,
             unit_price: 1300,
           },
         ],
@@ -140,9 +136,6 @@ async function khaltiPayment(userData, selectedPlan) {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Key e6f37d35bec24963b691f76c8d75315e',
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
           // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452
@@ -153,7 +146,6 @@ async function khaltiPayment(userData, selectedPlan) {
 
     khaltiRequestSuccess = true;
 
-    khaltiRequestSuccess = true;
     // await emailMailer.sendEmail({
     //   email: userData.email,
     //   firstName: userData.fname,

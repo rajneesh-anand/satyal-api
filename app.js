@@ -1,3 +1,4 @@
+require('dotenv').config();
 const cluster = require('cluster');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -5,7 +6,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const totalCPUs = require('os').cpus().length;
-require('dotenv').config();
 
 // Server Port
 const app = express();
@@ -30,9 +30,7 @@ const note = require('./routes/note');
 const worksheet = require('./routes/worksheet');
 const registerUser = require('./routes/registerUser');
 
-// middelewere
-
-// middelewere
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));

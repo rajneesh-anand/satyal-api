@@ -1,23 +1,26 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const prisma = require("../lib/prisma");
-const { hashSync, genSaltSync } = require("bcrypt");
-const axios = require("axios");
-const emailMailer = require("../helper/email");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const { hashSync, genSaltSync } = require('bcrypt');
+const axios = require('axios');
+const date = require('date-and-time');
+const { sendEmail, sendPasswordResetEmail, paymentSuccess } = require('../helper/email');
 
 // To give to front
 const subscriptionPlans = [
-  { name: "Basic", price: 1000 },
-  { name: "Standard", price: 2000 },
-  { name: "Premium", price: 3000 },
-  { name: "Enterprise", price: 4000 },
+  { name: 'Basic', price: 1000, duration: 1 }, // 1 month package
+  { name: 'Standard', price: 2000, duration: 3 }, // 3 months package
+  { name: 'Premium', price: 3000, duration: 6 }, // 6 months package
+  { name: 'Enterprise', price: 4000, duration: 12 }, // 12 months package
 ];
 
-// Define a route to handle the payment success callback
-router.get("/status", (req, res) => {
+// Define a route to handle the payment success callback using lookup
+router.post('/status', async (req, res) => {
   // Extract parameters from the callback URL
+  console.log('Hey I ran');
   const {
-    pidx,
+    email,
     transaction_id,
     amount,
     mobile,
@@ -25,20 +28,162 @@ router.get("/status", (req, res) => {
     purchase_order_name,
   } = req.query;
 
-  // Perform any necessary validation or processing
-  // For example, you can save the payment information to your database
-  // and update the user's status or order status.
+  console.log('Query parameters', req.query);
+  console.log('Email from query parameters', email);
+  console.log('Params parameters', req.params);
 
-  // Respond with a confirmation message
-  res.status(200).json({
-    message: "Payment success callback received",
-    pidx,
-    transaction_id,
-    amount,
-    mobile,
-    purchase_order_id,
-    purchase_order_name,
-  });
+  const userMail = email.split('?')[0];
+  const pidx = email.split('=')[1];
+  console.log('This is the pidx:', pidx);
+  console.log('This is the user email:', userMail);
+
+  // Validate parameters
+  if (
+    !pidx ||
+    !transaction_id ||
+    !amount ||
+    !mobile ||
+    !purchase_order_id ||
+    !purchase_order_name
+  ) {
+    throw new Error('Missing required parameters');
+  }
+
+  console.log('API KEY:, ', process.env.KHALTI_SATYAL_TEST_KEY);
+
+  try {
+    // Perform any necessary validation or processing
+    // For example, you can save the payment information to your database
+    // and update the user's status or order status.
+    const { data, status } = await axios.post(
+      // `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
+      `https://a.khalti.com/api/v2/epayment/lookup/`,
+      {
+        pidx: pidx,
+      },
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Key ${process.env.KHALTI_PK_KEY}`,
+          // Authorization: `Key fd0bbb0969ca474ca644b9d75e3a0452`,
+          // Live key: e6f37d35bec24963b691f76c8d75315e
+          // a3f9becf86874842bea79b6b4cc6e8a1
+          // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452
+          // Satyal Live: 453bba6dce5d44698f5c3f786b976b43
+        },
+      }
+    );
+
+    console.log('This is the payment lookup data:', data);
+
+    // Validate the data and extract the transaction details
+    if (status === 200 && data.status === 'Completed') {
+      // Get user based on your identification logic (e.g., session, token)
+      // yo user ko id aaucha req ma ka bata lyaune?
+      // Ka bata yo pass garayera lyaune is the question.
+      console.log('1  ?');
+
+      const user = await prisma.user.findUnique({
+        where: { email: userMail }, // Replace with your logic
+      });
+
+      // For this need subscription package full details to put in the purchase table
+      // for calculating its expiry date.
+      const pattern = date.compile('MMM D YYYY h:m:s A');
+      date.format(new Date(), pattern); // => Mar 16 2020 6:24:56 PM
+
+      console.log('2  ?', user);
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Create a new Purchase object
+      const purchase = await prisma.purchase.create({
+        data: {
+          userId: user.id, // Replace with actual user identification logic
+          name: `${user.firstName} ${user.middleName ? user.middleName : ''} ${
+            user.lastName
+          }`,
+          transactionId: transaction_id,
+          amount: parseFloat(amount), // Ensure proper data type conversion
+          mobile,
+          purchaseOrderId: purchase_order_id,
+          purchaseOrderName: purchase_order_name,
+          // purchaseOrderValidity: 1?
+          paymentMethod: 'Khalti', // Update based on actual payment method
+          paymentStatus: 'Success',
+          // need to update subscriptionExpiry here
+          subscriptionStartDate: date.format(new Date(), pattern),
+          subscriptionEndDate: date.format(date.addMonths(new Date(), 1), pattern),
+        },
+      });
+
+      console.log('3  ?');
+
+      if (purchase) {
+        // Update user status to active subscription
+        const isValidSubscription =
+          new Date() >= purchase.subscriptionStartDate &&
+          new Date() <= purchase.subscriptionEndDate;
+
+        // Update user status based on valid subscription
+        if (isValidSubscription) {
+          user.activeSubscription = true;
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { activeSubscription: true },
+          });
+        } else {
+          user.activeSubscription = false;
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { activeSubscription: false },
+          });
+        }
+      } else {
+        return res
+          .status(500)
+          .json({ message: 'Error performing database action for purchase' });
+      }
+
+      console.log('4  ?');
+
+      // Send confirmation email and notification
+      const userData = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        purchaseDetails: {
+          pidx,
+          transactionId: purchase.transactionId,
+          amount,
+          purchaseOrderId: purchase.purchaseOrderId,
+          purchaseOrderName: purchase.purchaseOrderName,
+        },
+      };
+      // await sendEmail(userData);
+
+      // Respond to Khalti with a confirmation message
+      return res.status(200).json({
+        message: 'Payment Verified. Thank you for your purchase!',
+        // pidx,
+        // transactionId: purchase.transactionId,
+        // amount: purchase.amount,
+        // mobile,
+        // purchaseOrderId: purchase.purchaseOrderId,
+        // purchaseOrderName: purchase.purchaseOrderName,
+        // user: {
+        //   activeSubscription: user.activeSubscription,
+        // },
+      });
+    }
+  } catch (error) {
+    console.error(error.message);
+    console.error(error);
+    res.status(500).json({ message: 'Error processing payment callback' });
+  }
 });
 
 // working code with real money test
@@ -161,7 +306,7 @@ router.get("/status", (req, res) => {
 //   }
 // });
 
-router.post("/khalti", async (req, res) => {
+router.post('/khalti', async (req, res) => {
   const { userData, payment, selectedPlan, userType } = req.body;
   console.log("This is user's data:", userData);
   console.log("This is plan's data:", selectedPlan);
@@ -175,7 +320,7 @@ router.post("/khalti", async (req, res) => {
 
   if (emailExist > 0) {
     return res.status(403).json({
-      message: "The email address is already registered !",
+      message: 'The email address is already registered !',
     });
   }
 
@@ -199,50 +344,52 @@ router.post("/khalti", async (req, res) => {
         studentClass: JSON.stringify(userData.studentClass),
         userContactNumber: userData.userContactNumber,
         userType: userType,
-        userStatus: "Active",
-        kycStatus: userType === "Teacher" ? "Kyc Pending" : "Not Required",
+        userStatus: 'Active',
+        kycStatus: userType === 'Teacher' ? 'Kyc Pending' : 'Not Required',
       },
     });
 
+    console.log('This is the result:', result);
+
     if (result) {
       const { data } = await axios.post(
-        "https://a.khalti.com/api/v2/epayment/initiate/",
+        'https://a.khalti.com/api/v2/epayment/initiate/',
         JSON.stringify({
-          return_url: "http://localhost:3000/payment/status",
-          website_url: "http://localhost:3000",
+          return_url: `http://localhost:3000/payment/status/?email=${result.email}/`,
+          website_url: 'http://localhost:3000',
           amount: 1300,
-          purchase_order_id: "test12",
-          purchase_order_name: "test",
+          purchase_order_id: 'test12',
+          purchase_order_name: 'test',
           customer_info: {
-            name: "Ashim Upadhaya",
-            email: "example@gmail.com",
-            phone: "9811496763",
+            name: 'Ashim Upadhaya',
+            email: 'example@gmail.com',
+            phone: '9811496763',
           },
           amount_breakdown: [
             {
-              label: "Mark Price",
+              label: 'Mark Price',
               amount: 1000,
             },
             {
-              label: "VAT",
+              label: 'VAT',
               amount: 300,
             },
           ],
           product_details: [
             {
-              identity: "1234567890",
-              name: "Khalti logo",
+              identity: '1234567890',
+              name: 'Khalti logo',
               total_price: 1300,
               quantity: 1,
-              unit_price: selectedPlan.price,
+              unit_price: 1300,
             },
           ],
         }),
         {
           headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: "Key e6f37d35bec24963b691f76c8d75315e",
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Key e6f37d35bec24963b691f76c8d75315e',
             // Live key: e6f37d35bec24963b691f76c8d75315e
             // a3f9becf86874842bea79b6b4cc6e8a1
             // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452
@@ -260,7 +407,7 @@ router.post("/khalti", async (req, res) => {
       //   lastName: userData.lname,
       // });
       return res.status(200).json({
-        message: "success",
+        message: 'success',
         payment_url: data.payment_url,
         data,
       });
@@ -439,8 +586,8 @@ async function createUser(userData, userType) {
       middleName: userData?.middleName,
       // ... other user data ...
       userType: userType,
-      userStatus: "Active",
-      kycStatus: userType === "Teacher" ? "Kyc Pending" : "Not Required",
+      userStatus: 'Active',
+      kycStatus: userType === 'Teacher' ? 'Kyc Pending' : 'Not Required',
     },
   });
 }
@@ -450,21 +597,21 @@ async function createUser(userData, userType) {
 async function initiatePayment(userData) {
   try {
     const { data } = await axios.post(
-      "https://a.khalti.com/api/v2/epayment/initiate/",
+      'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         // ... payment initiation payload ...
       }),
       {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Key a3f9becf86874842bea79b6b4cc6e8a1",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Key a3f9becf86874842bea79b6b4cc6e8a1',
         },
       }
     );
 
     return {
-      message: "success",
+      message: 'success',
       payment_url: data.payment_url,
     };
   } catch (error) {
@@ -475,7 +622,7 @@ async function initiatePayment(userData) {
 
 // Use the Separated Functions in the Route Handler:
 
-router.post("/khalti", async (req, res) => {
+router.post('/khalti', async (req, res) => {
   const { userData, payment, userType } = req.body;
   console.log("This is user's data:", userData);
 
@@ -508,21 +655,21 @@ router.post("/khalti", async (req, res) => {
 async function initiatePayment(userData) {
   try {
     const { data } = await axios.post(
-      "https://a.khalti.com/api/v2/epayment/initiate/",
+      'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         // ... payment initiation payload ...
       }),
       {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Key a3f9becf86874842bea79b6b4cc6e8a1",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Key a3f9becf86874842bea79b6b4cc6e8a1',
         },
       }
     );
 
     return {
-      message: "success",
+      message: 'success',
       payment_url: data.payment_url,
     };
   } catch (error) {
@@ -542,8 +689,8 @@ async function createUser(userData, userType) {
       middleName: userData?.middleName,
       // ... other user data ...
       userType: userType,
-      userStatus: "Active",
-      kycStatus: userType === "Teacher" ? "Kyc Pending" : "Not Required",
+      userStatus: 'Active',
+      kycStatus: userType === 'Teacher' ? 'Kyc Pending' : 'Not Required',
     },
   });
 }
@@ -558,7 +705,7 @@ async function createUser(userData, userType) {
 
 // const router = express.Router();
 
-router.post("/khalti", async (req, res) => {
+router.post('/khalti', async (req, res) => {
   const { userData, payment, userType } = req.body;
   console.log("This is user's data:", userData);
 

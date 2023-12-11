@@ -1,5 +1,5 @@
-const sendGridMail = require("@sendgrid/mail");
-const fs = require("fs");
+const sendGridMail = require('@sendgrid/mail');
+const fs = require('fs');
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const date = new Date();
@@ -10,7 +10,7 @@ let year = date.getFullYear();
 let currentDate = `${day}/${month}/${year}`;
 
 pathToAttachment = `${__dirname}/../upload/vat.pdf`;
-attachment = fs.readFileSync(pathToAttachment).toString("base64");
+attachment = fs.readFileSync(pathToAttachment).toString('base64');
 
 function getOrderConfirmationEmailHtml(params) {
   return `
@@ -595,8 +595,8 @@ function paymentSuccessTemplate(params) {
 function getMessage(emailParams) {
   return {
     to: emailParams.email,
-    from: "anand.k.rajneesh@hotmail.com",
-    subject: "Welcome to Satyal Digital Learning",
+    from: 'anand.k.rajneesh@hotmail.com',
+    subject: 'Welcome to Satyal Digital Learning',
     text: `Welcome ${emailParams.firstName}  ${emailParams.lastName} , We are glad to see you at Satyal Digital Learning`,
     html: getOrderConfirmationEmailHtml(emailParams),
   };
@@ -605,26 +605,27 @@ function getMessage(emailParams) {
 function resetPasswordMessage(emailParams) {
   return {
     to: emailParams.email,
-    from: "anand.k.rajneesh@hotmail.com",
-    subject: "Satyal Digital Learning Reset Password Link",
-    text: "Click here to reset your password",
+    from: 'prasannakkoirala@outlook.com',
+    subject: 'Satyal Digital Learning Reset Password Link',
+    text: 'Click here to reset your password',
     html: setResetPasswordTemplate(emailParams),
   };
 }
 
 function paymentSuccessMessage(emailParams) {
   return {
-    to: "aryan@satyalgroup.com",
-    from: "anand.k.rajneesh@hotmail.com",
-    subject: "Thank you for purchasing Satyal Digital Plan",
-    text: "Payment Successful",
+    // to: 'aryan@satyalgroup.com',
+    to: 'testpk@mailsac.com',
+    from: 'prasannakkoirala@outlook.com',
+    subject: 'Thank you for purchasing Satyal Digital Plan',
+    text: 'Payment Successful',
     html: paymentSuccessTemplate(emailParams),
     attachments: [
       {
         content: attachment,
-        filename: "vat.pdf",
-        type: "application/pdf",
-        disposition: "attachment",
+        filename: 'vat.pdf',
+        type: 'application/pdf',
+        disposition: 'attachment',
       },
     ],
   };
@@ -635,10 +636,10 @@ async function sendEmail(emailParams) {
   try {
     await sendGridMail.send(getMessage(emailParams));
     return {
-      message: "success",
+      message: 'success',
     };
   } catch (error) {
-    const message = "failed";
+    const message = 'failed';
     console.error(message);
     console.error(error);
     if (error.response) {
@@ -652,10 +653,10 @@ async function sendPasswordResetEmail(emailParams) {
   try {
     await sendGridMail.send(resetPasswordMessage(emailParams));
     return {
-      message: "success",
+      message: 'success',
     };
   } catch (error) {
-    const message = "failed";
+    const message = 'failed';
     console.error(message);
     console.error(error);
     if (error.response) {
@@ -669,10 +670,10 @@ async function paymentSuccess(emailParams) {
   try {
     await sendGridMail.send(paymentSuccessMessage(emailParams));
     return {
-      message: "success",
+      message: 'success',
     };
   } catch (error) {
-    const message = "failed";
+    const message = 'failed';
     console.error(message);
     console.error(error);
     if (error.response) {
