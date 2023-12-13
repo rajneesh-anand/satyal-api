@@ -175,7 +175,7 @@ model Purchase {
   id        Int        @id @default(autoincrement())
   userId    Int
   name      String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactionId String   @unique
   amount    Decimal
   mobile   String

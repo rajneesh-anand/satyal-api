@@ -5,14 +5,14 @@ const prisma = new PrismaClient();
 const { hashSync, genSaltSync } = require('bcrypt');
 const axios = require('axios');
 const date = require('date-and-time');
-const { sendEmail, sendPasswordResetEmail, paymentSuccess } = require('../helper/email');
+const { sendMail } = require('../helper/mailing');
 
 // To give to front
 const subscriptionPlans = [
-  { name: 'Basic', price: 1000, duration: 1 }, // 1 month package
-  { name: 'Standard', price: 2000, duration: 3 }, // 3 months package
-  { name: 'Premium', price: 3000, duration: 6 }, // 6 months package
-  { name: 'Enterprise', price: 4000, duration: 12 }, // 12 months package
+  { name: 'Basic', price: 1000, durationInMonths: 1 }, // 1 month package
+  { name: 'Standard', price: 2000, durationInMonths: 3 }, // 3 months package
+  { name: 'Premium', price: 3000, durationInMonths: 6 }, // 6 months package
+  { name: 'Enterprise', price: 4000, durationInMonths: 12 }, // 12 months package
 ];
 
 // Define a route to handle the payment success callback using lookup
@@ -26,7 +26,7 @@ router.post('/status', async (req, res) => {
     mobile,
     purchase_order_id,
     purchase_order_name,
-  } = req.query;
+  } = req.body;
 
   console.log('Query parameters', req.query);
   console.log('Email from query parameters', email);
@@ -65,7 +65,7 @@ router.post('/status', async (req, res) => {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          Authorization: `Key ${process.env.KHALTI_PK_KEY}`,
+          Authorization: `Key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
           // Authorization: `Key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
@@ -88,16 +88,16 @@ router.post('/status', async (req, res) => {
         where: { email: userMail }, // Replace with your logic
       });
 
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
       // For this need subscription package full details to put in the purchase table
       // for calculating its expiry date.
       const pattern = date.compile('MMM D YYYY h:m:s A');
       date.format(new Date(), pattern); // => Mar 16 2020 6:24:56 PM
 
       console.log('2  ?', user);
-
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
 
       // Create a new Purchase object
       const purchase = await prisma.purchase.create({
@@ -150,20 +150,30 @@ router.post('/status', async (req, res) => {
 
       console.log('4  ?');
 
-      // Send confirmation email and notification
-      const userData = {
+      // Mail Details for Welcoming the user
+      const mailDetails = {
         firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        purchaseDetails: {
-          pidx,
-          transactionId: purchase.transactionId,
-          amount,
-          purchaseOrderId: purchase.purchaseOrderId,
-          purchaseOrderName: purchase.purchaseOrderName,
-        },
+        subscriptionName: purchase.purchaseOrderName,
+        subscriptionDuration: 1,
+        startDate: purchase.subscriptionStartDate,
+        endDate: purchase.subscriptionEndDate,
+        transaction_id: purchase.transactionId,
+        pidx,
+        amountPaid: purchase.amount,
+        websiteUrl: 'http://localhost:3000',
+        year: new Date().getFullYear(),
       };
-      // await sendEmail(userData);
+
+      // Mail Details for User Password Reset
+      // const mailDetails = {
+      //   firstName: user.firstName,
+      //   lastName: user.lastName,
+      //   otpCode: otpCode,
+      //   otpExpiry: otpExpiry,
+      //   year: new Date().getFullYear(),
+      // };
+
+      sendMail(user.email, 'Welcome to Satyal Learning', mailDetails);
 
       // Respond to Khalti with a confirmation message
       return res.status(200).json({

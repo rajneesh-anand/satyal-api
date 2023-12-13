@@ -36,7 +36,7 @@ async function userRegisterController(req, res) {
       if (result) {
         // currently we directly used khalti for payment
         // latter we can create middleware or helper fun to call diff payment method
-        const khaltiData = await khaltiPayment(result, selectedPlan);
+        const khaltiData = await khaltiPayment(userData, selectedPlan);
         // console.log("given are the khalti call back data");
         // console.log(khaltiData);
         // return res.status(200).json(khaltiData);
