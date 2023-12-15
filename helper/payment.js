@@ -81,22 +81,21 @@ const axios = require("axios");
 
 // khalti payment heler function for test money
 async function khaltiPayment(userData, selectedPlan) {
-  const { plan_id, plan_fee, plan_name, with_out_vat } = selectedPlan;
+  const { id, plan_fee, plan_name, with_out_vat } = selectedPlan;
   const {
     firstName,
     middleName,
     lastName,
     email,
-    contactNumber,
+    userContactNumber,
     parentName,
     parentContactNumber,
   } = userData;
-  // console.log(userData);
+
   // const planVat = Number(with_out_vat) * 0.13;
   // const total_fee = Number(plan_fee * 100);
   // const mark_price = Number(with_out_vat) * 100;
-  // console.log(planVat);
-  // console.log(typeof plan_fee);
+
   try {
     const { data } = await axios.post(
       `${process.env.KHALTI_PAYMENT_TEST_URL}`,
@@ -104,12 +103,12 @@ async function khaltiPayment(userData, selectedPlan) {
         return_url: `http://localhost:3000/payment/status?email=${email}`,
         website_url: "http://localhost:3000",
         amount: 1300,
-        purchase_order_id: plan_id,
+        purchase_order_id: "123456",
         purchase_order_name: plan_name,
         customer_info: {
           name: `${firstName} ${middleName ? middleName : " "} ${lastName}`,
           email: email,
-          phone: contactNumber ? contactNumber : parentContactNumber,
+          phone: userContactNumber ? userContactNumber : parentContactNumber,
         },
         amount_breakdown: [
           {
@@ -123,7 +122,7 @@ async function khaltiPayment(userData, selectedPlan) {
         ],
         product_details: [
           {
-            identity: plan_id,
+            identity: id,
             name: plan_name,
             total_price: 1300,
             quantity: 1,
@@ -144,11 +143,6 @@ async function khaltiPayment(userData, selectedPlan) {
       }
     );
     khaltiRequestSuccess = true;
-    // await emailMailer.sendEmail({
-    //   email: userData.email,
-    //   firstName: userData.fname,
-    //   lastName: userData.lname,
-    // });
     return data;
   } catch (err) {
     console.log(err);

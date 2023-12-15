@@ -17,7 +17,8 @@ async function userRegisterController(req, res) {
   //   --->
 
   // checking req email is register or not on our system
-  if ((await emailValidatorInSystem(userData?.email)) > 0) {
+  const exitEmailCount = await emailValidatorInSystem(userData?.email);
+  if (exitEmailCount > 0) {
     return res.status(403).json({
       message: "The email address is already registered !",
     });
@@ -27,7 +28,7 @@ async function userRegisterController(req, res) {
     const salt = genSaltSync(10);
     const hashedPassword = hashSync(userData.password, salt);
     // calling student register util fun if usertype is student
-    if (userType === "student") {
+    if (userType === "Student") {
       // this function is used to add student information on DB
       let result = await registerStudent(userData, hashedPassword, userType);
       // console.log('This is the result:', result);
@@ -37,15 +38,12 @@ async function userRegisterController(req, res) {
         // currently we directly used khalti for payment
         // latter we can create middleware or helper fun to call diff payment method
         const khaltiData = await khaltiPayment(userData, selectedPlan);
-        // console.log("given are the khalti call back data");
-        // console.log(khaltiData);
-        // return res.status(200).json(khaltiData);
 
-        // if payment failed
+        // if payment failed or success
         if (khaltiData) {
           return res.status(200).json({
             message: "success khalti is login",
-            // payment_url: khaltiData?.payment_url,
+            payment_url: khaltiData?.payment_url,
             khaltiData,
           });
         } else {
