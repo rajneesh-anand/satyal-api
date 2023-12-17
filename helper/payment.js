@@ -1,5 +1,4 @@
 const axios = require('axios');
-const axios = require('axios');
 
 // khalti payment helper function for real money
 // async function khaltiPayment(userData, selectedPlan) {
@@ -96,33 +95,42 @@ async function khaltiPayment(userData, selectedPlan) {
   // const planVat = Number(with_out_vat) * 0.13;
   // const total_fee = Number(plan_fee * 100);
   // const mark_price = Number(with_out_vat) * 100;
+  console.log('User Data:', userData);
   console.log("Khalti's current URL:", process.env.KHALTI_PAYMENT_TEST_URL);
-  console.log("Khalti's current URL:", process.env.KHALTI_SATYAL_TEST_KEY);
+  console.log("Khalti's current KEY:", process.env.KHALTI_SATYAL_TEST_KEY);
+  console.log("Khalti's current Plan:", selectedPlan);
+
+  const contact = userContactNumber ? userContactNumber : parentContactNumber;
+  console.log('This is the contact:', contact);
+  console.log('This is the contacts type:', typeof contact);
 
   try {
     const { data } = await axios.post(
       `${process.env.KHALTI_PAYMENT_TEST_URL}`,
+      // 'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         return_url: `http://localhost:3000/payment/status?email=${email}`,
         website_url: 'http://localhost:3000',
-        website_url: 'http://localhost:3000',
         amount: 1300,
-        purchase_order_id: '123456',
-        purchase_order_id: '123456',
+        purchase_order_id: 'test12',
         purchase_order_name: plan_name,
         customer_info: {
           name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
           email: email,
-          phone: userContactNumber ? userContactNumber : parentContactNumber,
+          // phone: `${contact}`, // Does NOT WORK
+          phone: '9841234567',
         },
+        // customer_info: {
+        //   name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
+        //   email: email,
+        //   phone: userContactNumber ? userContactNumber : parentContactNumber,
+        // },
         amount_breakdown: [
           {
-            label: 'Mark Price',
             label: 'Mark Price',
             amount: 1000,
           },
           {
-            label: 'VAT',
             label: 'VAT',
             amount: 300,
           },
@@ -141,7 +149,8 @@ async function khaltiPayment(userData, selectedPlan) {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
+          Authorization: `key ${process.env.KHALTI_PK_KEY}`,
+          // Authorization: `key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
           // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452

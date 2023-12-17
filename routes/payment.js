@@ -7,14 +7,6 @@ const axios = require('axios');
 const date = require('date-and-time');
 const { sendMail } = require('../helper/mailing');
 
-// To give to front
-const subscriptionPlans = [
-  { name: 'Basic', price: 1000, durationInMonths: 1 }, // 1 month package
-  { name: 'Standard', price: 2000, durationInMonths: 3 }, // 3 months package
-  { name: 'Premium', price: 3000, durationInMonths: 6 }, // 6 months package
-  { name: 'Enterprise', price: 4000, durationInMonths: 12 }, // 12 months package
-];
-
 // Define a route to handle the payment success callback using lookup
 router.post('/status', async (req, res) => {
   // Extract parameters from the callback URL
@@ -31,7 +23,7 @@ router.post('/status', async (req, res) => {
   // console.log("Query parameters", req.query);
   // console.log("Email from query parameters", email);
   // console.log("Params parameters", req.params);
-  console.log(req.body);
+  console.log('I am body inside /status route:', req.body);
   // console.log(user_id);
   // return;
   const userMail = email?.split('?')[0];
@@ -51,7 +43,7 @@ router.post('/status', async (req, res) => {
     throw new Error('Missing required parameters');
   }
 
-  console.log('API KEY:, ', process.env.KHALTI_SATYAL_TEST_KEY);
+  console.log('API KEY:, ', process.env.KHALTI_PK_KEY);
 
   try {
     // Perform any necessary validation or processing
@@ -60,6 +52,7 @@ router.post('/status', async (req, res) => {
     const { data, status } = await axios.post(
       `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
       // `https://a.khalti.com/api/v2/epayment/lookup/`,
+      // `https://khalti.com/api/v2/epayment/lookup/`,
       {
         pidx: pidx,
       },
@@ -67,7 +60,7 @@ router.post('/status', async (req, res) => {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
+          Authorization: `key ${process.env.KHALTI_PK_KEY}`,
           // Authorization: `Key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
