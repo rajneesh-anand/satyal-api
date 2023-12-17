@@ -1,4 +1,5 @@
 const axios = require('axios');
+const axios = require('axios');
 
 // khalti payment helper function for real money
 // async function khaltiPayment(userData, selectedPlan) {
@@ -104,20 +105,24 @@ async function khaltiPayment(userData, selectedPlan) {
       JSON.stringify({
         return_url: `http://localhost:3000/payment/status?email=${email}`,
         website_url: 'http://localhost:3000',
+        website_url: 'http://localhost:3000',
         amount: 1300,
+        purchase_order_id: '123456',
         purchase_order_id: '123456',
         purchase_order_name: plan_name,
         customer_info: {
-          name: 'Ashim Upadhaya',
-          email: 'example@gmail.com',
-          phone: '9811496763',
+          name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
+          email: email,
+          phone: userContactNumber ? userContactNumber : parentContactNumber,
         },
         amount_breakdown: [
           {
             label: 'Mark Price',
+            label: 'Mark Price',
             amount: 1000,
           },
           {
+            label: 'VAT',
             label: 'VAT',
             amount: 300,
           },
@@ -136,8 +141,7 @@ async function khaltiPayment(userData, selectedPlan) {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          // Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
-          Authorization: `Key e6f37d35bec24963b691f76c8d75315e`,
+          Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
           // Satyal Test: fd0bbb0969ca474ca644b9d75e3a0452
