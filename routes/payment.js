@@ -28,12 +28,14 @@ router.post("/status", async (req, res) => {
     purchase_order_name,
   } = req.body;
 
-  console.log("Query parameters", req.query);
-  console.log("Email from query parameters", email);
-  console.log("Params parameters", req.params);
-
-  const userMail = email.split("?")[0];
-  const pidx = email.split("=")[1];
+  // console.log("Query parameters", req.query);
+  // console.log("Email from query parameters", email);
+  // console.log("Params parameters", req.params);
+  console.log(req.body);
+  // console.log(user_id);
+  // return;
+  const userMail = email?.split("?")[0];
+  const pidx = email?.split("=")[1];
   console.log("This is the pidx:", pidx);
   console.log("This is the user email:", userMail);
 
