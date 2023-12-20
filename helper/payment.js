@@ -184,7 +184,7 @@ async function khaltiPaymentLookUp(pid) {
     );
     return result.data;
   } catch (err) {
-    console.log("khalti lookup helper error");
+    console.log("khalti lookup helper error", err);
   }
 }
 module.exports = { khaltiPayment, khaltiPaymentLookUp };
