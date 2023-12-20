@@ -6,14 +6,13 @@ const { hashSync, genSaltSync } = require("bcrypt");
 const axios = require("axios");
 const date = require("date-and-time");
 const { sendMail } = require("../helper/mailing");
+const {
+  userCheckPaymentStatus,
+} = require("../controllers/usersControllers/payment_contoller");
 
-// To give to front
-const subscriptionPlans = [
-  { name: "Basic", price: 1000, durationInMonths: 1 }, // 1 month package
-  { name: "Standard", price: 2000, durationInMonths: 3 }, // 3 months package
-  { name: "Premium", price: 3000, durationInMonths: 6 }, // 6 months package
-  { name: "Enterprise", price: 4000, durationInMonths: 12 }, // 12 months package
-];
+// after user successfully payment, update payment status
+
+router.post("/user/updatestatus", userCheckPaymentStatus);
 
 // Define a route to handle the payment success callback using lookup
 router.post("/status", async (req, res) => {

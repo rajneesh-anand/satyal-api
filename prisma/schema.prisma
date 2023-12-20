@@ -173,16 +173,19 @@ model Worksheet {
 
 model Purchase {
   id        Int        @id @default(autoincrement())
-  userId    Int
   name      String
+  userAccessStatus Boolean //this field used to user validation to access dashboard
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int @unique
   transactionId String   @unique
+  pidx String
   amount    Decimal
   mobile   String
   purchaseOrderId String
   purchaseOrderName String
   paymentMethod String
   paymentStatus String
+
   // subscriptionStartDate DateTime @default(now())
   // subscriptionEndDate   DateTime @default(now())
   subscriptionStartDate String

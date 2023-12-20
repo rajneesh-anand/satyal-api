@@ -1,6 +1,6 @@
-const path = require('path');
-const nodemailer = require('nodemailer');
-const hbs = require('nodemailer-express-handlebars');
+const path = require("path");
+const nodemailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
 
 let transporter = nodemailer.createTransport({
   service: `SendGrid`,
@@ -21,24 +21,24 @@ let transporter = nodemailer.createTransport({
 
 const handlebarsOptions = {
   viewEngine: {
-    extName: '.hbs',
-    partialDir: path.join(__dirname, '../views'),
+    extName: ".hbs",
+    partialDir: path.join(__dirname, "../views"),
     defaultLayout: false,
   },
-  viewPath: path.join(__dirname, '../views'),
-  extName: '.hbs',
+  viewPath: path.join(__dirname, "../views"),
+  extName: ".hbs",
 };
 
-transporter.use('compile', hbs(handlebarsOptions));
+transporter.use("compile", hbs(handlebarsOptions));
 
 exports.sendMail = async (reciever, sub, mailDetails, isWelcomeMail = true) => {
   let mailOptions = {
     // from: `Prasanna Koirala <${MAIL_FROM}>`,
     // from: `${MAIL_FROM}`,
-    from: 'prasannakkoirala@outlook.com',
+    from: "prasannakkoirala@outlook.com",
     to: reciever,
     subject: sub,
-    template: isWelcomeMail ? 'email' : 'reset-password',
+    template: isWelcomeMail ? "email" : "reset-password",
     context: {
       ...mailDetails,
     },
@@ -53,7 +53,7 @@ exports.sendMail = async (reciever, sub, mailDetails, isWelcomeMail = true) => {
       console.log(error);
       console.log(error.message);
     } else {
-      console.log('Mail sent to: ' + reciever);
+      console.log("Mail sent to: " + reciever);
     }
   });
 };

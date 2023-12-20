@@ -148,4 +148,26 @@ async function khaltiPayment(userData, selectedPlan) {
     console.log(err);
   }
 }
-module.exports = { khaltiPayment };
+// khalti lookup function to test successfuly payed or not
+async function khaltiPaymentLookUp(pid) {
+  try {
+    const result = await axios.post(
+      // `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
+      `https://a.khalti.com/api/v2/epayment/lookup/`,
+      {
+        pidx: pid,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
+        },
+      }
+    );
+    return result.data;
+  } catch (err) {
+    console.log("khalti lookup helper error");
+  }
+}
+module.exports = { khaltiPayment, khaltiPaymentLookUp };
