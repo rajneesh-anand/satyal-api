@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 // khalti payment helper function for real money
 // async function khaltiPayment(userData, selectedPlan) {
@@ -95,14 +95,14 @@ async function khaltiPayment(userData, selectedPlan) {
   // const planVat = Number(with_out_vat) * 0.13;
   // const total_fee = Number(plan_fee * 100);
   // const mark_price = Number(with_out_vat) * 100;
-  console.log('User Data:', userData);
+  console.log("User Data:", userData);
   console.log("Khalti's current URL:", process.env.KHALTI_PAYMENT_TEST_URL);
   console.log("Khalti's current KEY:", process.env.KHALTI_SATYAL_TEST_KEY);
   console.log("Khalti's current Plan:", selectedPlan);
 
   const contact = userContactNumber ? userContactNumber : parentContactNumber;
-  console.log('This is the contact:', contact);
-  console.log('This is the contacts type:', typeof contact);
+  console.log("This is the contact:", contact);
+  console.log("This is the contacts type:", typeof contact);
 
   try {
     const { data } = await axios.post(
@@ -110,15 +110,15 @@ async function khaltiPayment(userData, selectedPlan) {
       // 'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         return_url: `http://localhost:3000/payment/status?email=${email}`,
-        website_url: 'http://localhost:3000',
+        website_url: "http://localhost:3000",
         amount: 1300,
-        purchase_order_id: 'test12',
+        purchase_order_id: "test12",
         purchase_order_name: plan_name,
         customer_info: {
-          name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
+          name: `${firstName} ${middleName ? middleName : " "} ${lastName}`,
           email: email,
           // phone: `${contact}`, // Does NOT WORK
-          phone: '9841234567',
+          phone: "9841234567",
         },
         // customer_info: {
         //   name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
@@ -127,11 +127,11 @@ async function khaltiPayment(userData, selectedPlan) {
         // },
         amount_breakdown: [
           {
-            label: 'Mark Price',
+            label: "Mark Price",
             amount: 1000,
           },
           {
-            label: 'VAT',
+            label: "VAT",
             amount: 300,
           },
         ],
@@ -147,8 +147,8 @@ async function khaltiPayment(userData, selectedPlan) {
       }),
       {
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `key ${process.env.KHALTI_PK_KEY}`,
           // Authorization: `key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
@@ -159,11 +159,32 @@ async function khaltiPayment(userData, selectedPlan) {
       }
     );
     khaltiRequestSuccess = true;
-    console.log('Data from Khalti', data);
+    console.log("Data from Khalti", data);
     return data;
   } catch (err) {
     console.log(err);
   }
 }
-
-module.exports = { khaltiPayment };
+// khalti lookup function to test successfuly payed or not
+async function khaltiPaymentLookUp(pid) {
+  try {
+    const result = await axios.post(
+      // `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
+      `https://a.khalti.com/api/v2/epayment/lookup/`,
+      {
+        pidx: pid,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
+        },
+      }
+    );
+    return result.data;
+  } catch (err) {
+    console.log("khalti lookup helper error");
+  }
+}
+module.exports = { khaltiPayment, khaltiPaymentLookUp };

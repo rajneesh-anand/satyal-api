@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 const {
@@ -6,11 +6,11 @@ const {
   getClassDetails,
   getAllEnrolledClasses,
   leaveOnlineClass,
-} = require('../controllers/onlineClassStudent');
+} = require("../controllers/onlineClassStudent");
 // Define your routes
-router.post('/enroll', enrollClass);
-router.get('/enrolledClasses/:email', getAllEnrolledClasses);
-router.get('/details/:classId', getClassDetails);
-router.patch('/leave', leaveOnlineClass);
+router.post("/enroll", enrollClass);
+router.get("/enrolledClasses/:email", getAllEnrolledClasses);
+router.get("/details/:classId", getClassDetails);
+router.patch("/leave", leaveOnlineClass);
 
 module.exports = router;

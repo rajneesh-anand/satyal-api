@@ -14,5 +14,15 @@ async function emailValidatorInSystem(email) {
     console.log(err);
   }
 }
-
-module.exports = { emailValidatorInSystem };
+// checking given email id user register or not
+async function userExitInSystemValidator(email) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    });
+    return user;
+  } catch (err) {
+    console.log(err);
+  }
+}
+module.exports = { emailValidatorInSystem, userExitInSystemValidator };
