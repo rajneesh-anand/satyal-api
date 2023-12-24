@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require('axios');
 
 // khalti payment helper function for real money
 // async function khaltiPayment(userData, selectedPlan) {
@@ -110,15 +110,16 @@ async function khaltiPayment(userData, selectedPlan) {
       // 'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         return_url: `http://localhost:3000/payment/status?email=${email}`,
-        website_url: "http://localhost:3000",
+        // return_url: `http://localhost:3000/api/v1/payment/user/updatestatus?email=${email}`,
+        website_url: 'http://localhost:3000',
         amount: 1300,
-        purchase_order_id: "test12",
+        purchase_order_id: 'test12',
         purchase_order_name: plan_name,
         customer_info: {
-          name: `${firstName} ${middleName ? middleName : " "} ${lastName}`,
+          name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
           email: email,
           // phone: `${contact}`, // Does NOT WORK
-          phone: "9841234567",
+          phone: '9841234567',
         },
         // customer_info: {
         //   name: `${firstName} ${middleName ? middleName : ' '} ${lastName}`,
@@ -127,11 +128,11 @@ async function khaltiPayment(userData, selectedPlan) {
         // },
         amount_breakdown: [
           {
-            label: "Mark Price",
+            label: 'Mark Price',
             amount: 1000,
           },
           {
-            label: "VAT",
+            label: 'VAT',
             amount: 300,
           },
         ],
@@ -147,9 +148,9 @@ async function khaltiPayment(userData, selectedPlan) {
       }),
       {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `key ${process.env.KHALTI_PK_KEY}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
           // Authorization: `key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
@@ -159,7 +160,7 @@ async function khaltiPayment(userData, selectedPlan) {
       }
     );
     khaltiRequestSuccess = true;
-    console.log("Data from Khalti", data);
+    console.log('Data from Khalti', data);
     return data;
   } catch (err) {
     console.log(err);
@@ -176,8 +177,8 @@ async function khaltiPaymentLookUp(pid) {
       },
       {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
           Authorization: `Key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
         },
       }
@@ -185,7 +186,7 @@ async function khaltiPaymentLookUp(pid) {
 
     return result.data;
   } catch (err) {
-    console.log("khalti lookup helper error", err);
+    console.log('khalti lookup helper error', err);
   }
 }
 module.exports = { khaltiPayment, khaltiPaymentLookUp };

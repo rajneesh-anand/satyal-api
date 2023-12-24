@@ -177,7 +177,7 @@ model Purchase {
   userAccessStatus Boolean //this field used to user validation to access dashboard
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int @unique
-  transactionId String   @unique
+  transactionId String @unique
   pidx String
   amount    Decimal
   mobile   String
