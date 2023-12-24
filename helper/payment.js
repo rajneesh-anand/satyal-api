@@ -95,14 +95,14 @@ async function khaltiPayment(userData, selectedPlan) {
   // const planVat = Number(with_out_vat) * 0.13;
   // const total_fee = Number(plan_fee * 100);
   // const mark_price = Number(with_out_vat) * 100;
-  console.log("User Data:", userData);
-  console.log("Khalti's current URL:", process.env.KHALTI_PAYMENT_TEST_URL);
-  console.log("Khalti's current KEY:", process.env.KHALTI_SATYAL_TEST_KEY);
-  console.log("Khalti's current Plan:", selectedPlan);
+  // console.log("User Data:", userData);
+  // console.log("Khalti's current URL:", process.env.KHALTI_PAYMENT_TEST_URL);
+  // console.log("Khalti's current KEY:", process.env.KHALTI_SATYAL_TEST_KEY);
+  // console.log("Khalti's current Plan:", selectedPlan);
 
   const contact = userContactNumber ? userContactNumber : parentContactNumber;
-  console.log("This is the contact:", contact);
-  console.log("This is the contacts type:", typeof contact);
+  // console.log("This is the contact:", contact);
+  // console.log("This is the contacts type:", typeof contact);
 
   try {
     const { data } = await axios.post(
@@ -169,8 +169,8 @@ async function khaltiPayment(userData, selectedPlan) {
 async function khaltiPaymentLookUp(pid) {
   try {
     const result = await axios.post(
-      // `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
-      `https://a.khalti.com/api/v2/epayment/lookup/`,
+      `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
+      // `https://a.khalti.com/api/v2/epayment/lookup/`,
       {
         pidx: pid,
       },
@@ -182,6 +182,7 @@ async function khaltiPaymentLookUp(pid) {
         },
       }
     );
+
     return result.data;
   } catch (err) {
     console.log("khalti lookup helper error", err);
