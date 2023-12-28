@@ -89,9 +89,7 @@ const userCheckPaymentStatus = async (req, res) => {
       }
       //  welcome mail details
       const mailDetails = {
-        userName: `${exitUser?.firstName} ${
-          exitUser?.middleName ? exitUser?.middleName : ' '
-        } ${exitUser.lastName}`,
+        firstName: exitUser?.firstName,
         subscriptionName: purchase.purchaseOrderName,
         subscriptionDuration: 1,
         startDate: purchase.subscriptionStartDate,
