@@ -110,6 +110,7 @@ async function khaltiPayment(userData, selectedPlan) {
       // 'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
         return_url: `http://localhost:3000/payment/status?email=${email}`,
+        // return_url: `http://localhost:3000/api/v1/payment/user/updatestatus?email=${email}`,
         website_url: "http://localhost:3000",
         amount: 1300,
         purchase_order_id: "test12",

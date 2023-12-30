@@ -1,62 +1,61 @@
-<html lang="en">
+<html lang='en'>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Satyal Learning - Subscription Confirmation!</title>
   </head>
-  <body style="font-family: sans-serif; margin: 0; padding: 0; color: #333;">
-    <div style="background-color: #993333; color: #fff; padding: 20px;">
-      <h1>Hi, {{userName}} - Welcome to Satyal Learning!</h1>
-      <p style="margin: 10px 0;">Thank you for subscribing to Satyal Learning
-        and unlocking the world of knowledge!</p>
+  <body style='font-family: sans-serif; margin: 0; padding: 0; color: #333;'>
+    <div style='background-color: #690F00; color: #fff; padding: 20px;'>
+      <h1>Hi, {{firstName}} - Welcome to Satyal Learning!</h1>
+      <p style='margin: 10px 0;'>Thank you for choosing Satyal Learning! At our digital
+        platform, we seek to change the way we educate our loved ones like you!</p>
     </div>
-    <div style="padding: 20px; background-color: #f5f5f5;">
+    <div style='padding: 20px; background-color: #f5f5f5;'>
       <h2>Your Subscription Details</h2>
-      <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <table style='width: 100%; border-collapse: collapse; margin-top: 10px;'>
         <thead>
           <tr>
             <th
-              style="padding: 5px; border-bottom: 1px solid #ddd; text-align: left;"
+              style='padding: 5px; border-bottom: 1px solid #ddd; text-align: left;'
             >Field</th>
-            <th style="padding: 5px; border-bottom: 1px solid #ddd;">Value</th>
+            <th style='padding: 5px; border-bottom: 1px solid #ddd;'>Value</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 5px;">Subscription Name</td>
-            <td style="padding: 5px;">{{subscriptionName}}</td>
+            <td style='padding: 5px;'>Subscription Package</td>
+            <td style='padding: 5px;'>{{subscriptionName}}</td>
           </tr>
           <tr>
-            <td style="padding: 5px;">Subscription Duration</td>
-            <td style="padding: 5px;">{{subscriptionDuration}}</td>
+            <td style='padding: 5px;'>Duration and Expiry</td>
+            <td style='padding: 5px;'>{{subscriptionDuration}}</td>
           </tr>
           <tr>
-            <td style="padding: 5px;">Start Date</td>
-            <td style="padding: 5px;">{{startDate}}</td>
+            <td style='padding: 5px;'>Purchased Date</td>
+            <td style='padding: 5px;'>{{startDate}}</td>
           </tr>
           <tr>
-            <td style="padding: 5px;">Amount Paid</td>
-            <td style="padding: 5px;">{{amountPaid}} NPR</td>
+            <td style='padding: 5px;'>Amount Paid</td>
+            <td style='padding: 5px;'>Rs.{{amountPaid}}/- (Incl of VAT)</td>
           </tr>
         </tbody>
       </table>
-      <p style="margin-top: 20px;">
-        With your new subscription, you now have access to a vast library of
-        online courses, interactive learning tools, and much more. Start
-        exploring today and embark on a journey of intellectual growth and
-        personal development!
+      <p style='margin-top: 20px;'>
+        With our subscription, you now have an access to our Online Class, Online Test &
+        Online Tuition! With this you also get free E-books, Animated Contents as well as
+        Thousands of Practice Questions!!
       </p>
       <a
-        href="{{websiteUrl}}"
-        style="display: inline-block; padding: 10px 20px; background-color: #993333; color: #fff; text-decoration: none;"
+        href='{{websiteUrl}}'
+        style='display: inline-block; padding: 10px 20px; background-color: #690F00; color: #fff; text-decoration: none;'
       >Start Your Learning Adventure!</a>
     </div>
     <div
-      style="background-color: #993333; color: #fff; padding: 20px; text-align: center;"
+      style='background-color: #690F00; color: #fff; padding: 20px; text-align: center;'
     >
-      <p style="margin: 0;">&copy;
+      <p style='margin: 0;'>&copy;
         {{year}}
-        Satyal Learning. All Rights Reserved.</p>
+        Copyright Satyal The Online Learning Platform Pvt. Ltd. All Rights Reserved.</p>
     </div>
   </body>
 </html>
