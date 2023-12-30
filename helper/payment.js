@@ -149,7 +149,7 @@ async function khaltiPayment(userData, selectedPlan) {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `key ${process.env.KHALTI_PK_KEY}`,
+          Authorization: `key ${process.env.KHALTI_SATYAL_TEST_KEY}`,
           // Authorization: `key fd0bbb0969ca474ca644b9d75e3a0452`,
           // Live key: e6f37d35bec24963b691f76c8d75315e
           // a3f9becf86874842bea79b6b4cc6e8a1
@@ -169,8 +169,8 @@ async function khaltiPayment(userData, selectedPlan) {
 async function khaltiPaymentLookUp(pid) {
   try {
     const result = await axios.post(
-      `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
-      // `https://a.khalti.com/api/v2/epayment/lookup/`,
+      // `${process.env.KHALTI_PAYMENT_LOOKUP_TEST_URL}`,
+      `https://a.khalti.com/api/v2/epayment/lookup/`,
       {
         pidx: pid,
       },
