@@ -109,7 +109,7 @@ async function khaltiPayment(userData, selectedPlan) {
       `${process.env.KHALTI_PAYMENT_TEST_URL}`,
       // 'https://a.khalti.com/api/v2/epayment/initiate/',
       JSON.stringify({
-        return_url: `http://localhost:3000/payment/status?email=${email}`,
+        return_url: `http://localhost:3000/payment/status`,
         // return_url: `http://localhost:3000/api/v1/payment/user/updatestatus?email=${email}`,
         website_url: "http://localhost:3000",
         amount: 1300,
@@ -160,7 +160,7 @@ async function khaltiPayment(userData, selectedPlan) {
       }
     );
     khaltiRequestSuccess = true;
-    console.log("Data from Khalti", data);
+    // console.log("Data from Khalti", data);
     return data;
   } catch (err) {
     console.log(err);

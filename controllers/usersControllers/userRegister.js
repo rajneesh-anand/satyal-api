@@ -2,7 +2,7 @@ const { hashSync, genSaltSync } = require("bcrypt");
 const { emailValidatorInSystem } = require("../../helper/reqUser-validator");
 const { registerStudent } = require("../../helper/user");
 const { khaltiPayment } = require("../../helper/payment");
-
+const { initiatedPlanOrder } = require("../../helper/purchase");
 // user register controller
 // currently it only work on student register
 async function userRegisterController(req, res) {
@@ -39,8 +39,22 @@ async function userRegisterController(req, res) {
         // latter we can create middleware or helper fun to call diff payment method
         const khaltiData = await khaltiPayment(userData, selectedPlan);
 
-        // if payment failed or success
+        // return;
+        // if payment  success
         if (khaltiData) {
+          // Initiated purchase order  in DB
+          let initializePurchase = await initiatedPlanOrder(
+            khaltiData,
+            result,
+            selectedPlan,
+            paymentMethod
+          );
+          if (!initializePurchase) {
+            return res
+              .status(500)
+              .json({ message: "paymet initialize failed" });
+          }
+          // console.log(initializePurchase);
           return res.status(200).json({
             message: "success khalti is login",
             payment_url: khaltiData?.payment_url,
