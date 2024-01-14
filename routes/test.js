@@ -7,7 +7,10 @@ const prisma = require("../lib/prisma");
 const DatauriParser = require("datauri/parser");
 const cloudinary = require("cloudinary").v2;
 const { GoogleSpreadsheet } = require("google-spreadsheet");
-
+const asyncHandeler = require("../middleware/asyncHandeler");
+const CustomeError = require("../utils/customeError");
+const ApiResponse = require("../utils/apiResponse");
+const { default: axios } = require("axios");
 const router = express.Router();
 const parser = new DatauriParser();
 
@@ -140,7 +143,27 @@ router.get("/image/:url", async (req, res) => {
   }
 });
 
-
-
+// testing error response
+router.post(
+  "/errorResponse",
+  asyncHandeler(async (req, res, next) => {
+    return next(new CustomeError(400, "error message"));
+  })
+);
+// success response
+router.post(
+  "/successResponse",
+  asyncHandeler(async (req, res) => {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "all requested data comes here",
+          "if any message need to show users"
+        )
+      );
+  })
+);
 
 module.exports = router;
